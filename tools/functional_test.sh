@@ -15,9 +15,13 @@ helm upgrade azimuth-schedule-operator ./charts/operator \
   --timeout 10m \
   --set-string image.tag=${GITHUB_SHA::7}
 
-until [ `kubectl get crds | grep schedule | wc -l` -gt 1 ]; do echo "wait for crds"; sleep 5; done
+until [ `kubectl get crds | grep schedules.scheduling.azimuth.stackhpc.com | wc -l` -eq 1 ]; do echo "wait for crds"; sleep 5; done
 kubectl get crds
 
-kubectl apply -f $SCRIPT_DIR/test_schedule.yaml
+
+export BEFORE=$(date --date="-1 hour" +"%Y-%m-%dT%H:%M:%SZ")
+export AFTER=$(date --date="+2 hour" +"%Y-%m-%dT%H:%M:%SZ")
+envsubst < $SCRIPT_DIR/test_schedule.yaml | kubectl apply -f -
+
 # until kubectl wait --for=jsonpath='{.status.phase}'=Available clustertype quick-test; do echo "wait for status to appear"; sleep 5; done
-kubectl get schedule caas-cluster -o yaml
+kubectl get schedule caas-mycluster -o yaml

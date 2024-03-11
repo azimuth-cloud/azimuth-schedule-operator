@@ -9,5 +9,5 @@ spec:
     apiVersion: caas.azimuth.stackhpc.com/v1alpha1
     kind: Cluster
     name: mycluster
-  notBefore: "20240302T09:00:00Z"
-  notAfter: "20250302T10:00:00Z"
+  notBefore: $BEFORE
+  notAfter: $AFTER
