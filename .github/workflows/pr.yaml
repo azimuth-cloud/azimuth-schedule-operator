@@ -35,7 +35,7 @@ jobs:
   functional_tests:
     needs: [publish_images]
     uses: ./.github/workflows/functional.yaml
-    if: github.repository == 'stackhpc/azimuth-schedule-operator-todo'
+    if: github.repository == 'stackhpc/azimuth-schedule-operator'
 
   # The integration tests require the charts, and are only worth running once
   # the functional tests are passing
