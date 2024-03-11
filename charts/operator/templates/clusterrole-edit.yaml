@@ -10,6 +10,6 @@ metadata:
     rbac.authorization.k8s.io/aggregate-to-view: "true"
 rules:
   # Grant access to the azimuth-schedule objects
-  - apiGroups: ["schedule.azimuth.stackhpc.com"]
+  - apiGroups: ["scheduling.azimuth.stackhpc.com"]
     resources: ["*"]
     verbs: ["*"]

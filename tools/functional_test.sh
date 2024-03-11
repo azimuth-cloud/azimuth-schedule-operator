@@ -13,10 +13,7 @@ helm upgrade azimuth-schedule-operator ./charts/operator \
   --install \
   --wait \
   --timeout 10m \
-  --set-string image.tag=${GITHUB_SHA::7} \
-  --set-string config.ansibleRunnerImage.tag=${GITHUB_SHA::7} \
-  --set-string ara.image.tag=${GITHUB_SHA::7} \
-  --set-string config.consulUrl=fakeconsul
+  --set-string image.tag=${GITHUB_SHA::7}
 
 until [ `kubectl get crds | grep schedule | wc -l` -gt 1 ]; do echo "wait for crds"; sleep 5; done
 kubectl get crds

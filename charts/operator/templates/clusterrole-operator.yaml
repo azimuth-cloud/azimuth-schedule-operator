@@ -15,7 +15,7 @@ rules:
     resources: ["events"]
     verbs: ["create"]
   # Required by azimuth-schedule
-  - apiGroups: ["schedule.azimuth.stackhpc.com"]
+  - apiGroups: ["scheduling.azimuth.stackhpc.com"]
     resources: ["*"]
     verbs: ["*"]
   - apiGroups: ["caas.azimuth.stackhpc.com"]
