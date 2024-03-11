@@ -1,0 +1,23 @@
+{{- if and .Values.metrics.enabled .Values.metrics.prometheus.rules.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "azimuth-schedule-operator.fullname" . }}
+  labels: {{ include "azimuth-schedule-operator.labels" . | nindent 4 }}
+spec:
+  groups:
+    - name: azimuth-schedule-operator.rules
+      rules:
+        - alert: AzimuthCaasClusterNotReady
+          expr: >-
+            sum(azimuth_schedule_clusters_phase{phase!="Ready"}) by(cluster_namespace, cluster_name) > 0
+          for: 1h
+          annotations:
+            description: >-
+              Azimuth schedule
+              {{ "{{" }} $labels.cluster_namespace {{ "}}" }}/{{ "{{" }} $labels.cluster_name {{ "}}" }}
+              has been in a non-ready state for longer than one hour.
+            summary: Azimuth schedule has been in a non-ready state for more than one hour.
+          labels:
+            severity: warning
+{{- end }}

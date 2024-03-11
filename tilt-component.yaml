@@ -1,0 +1,6 @@
+chart: ./charts/operator
+
+images:
+  azimuth-schedule-operator:
+    context: .
+    chart_path: image

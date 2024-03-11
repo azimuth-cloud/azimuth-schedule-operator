@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "azimuth-schedule-operator.fullname" . }}:controller
+  labels: {{ include "azimuth-schedule-operator.labels" . | nindent 4 }}
+rules:
+  # Required by kopf
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["*"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["list", "watch"]
+  - apiGroups: ["", "events.k8s.io"]
+    resources: ["events"]
+    verbs: ["create"]
+  # Required by azimuth-schedule
+  - apiGroups: ["schedule.azimuth.stackhpc.com"]
+    resources: ["*"]
+    verbs: ["*"]
+  - apiGroups: ["caas.azimuth.stackhpc.com"]
+    resources: ["*"]
+    verbs: ["*"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterrolebindings"]
+    verbs: ["get", "list", "create", "update", "patch"]
