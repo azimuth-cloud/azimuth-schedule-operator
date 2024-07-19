@@ -67,3 +67,13 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
 
         mock_fetch_lease.assert_awaited_once_with(cloud, lease_id)
         self.assertEqual({"old1": "new1", "old2": "new2"}, result)
+
+    @mock.patch.object(blazar, "_fetch_lease")
+    async def test_get_lease_flavors_returns_None(self, mock_fetch_lease):
+        cloud = mock.Mock()
+        lease_id = "lease_id"
+        mock_fetch_lease.return_value = {"status": "STARTING"}
+
+        result = await blazar.get_lease_flavors(cloud, lease_id)
+
+        self.assertIsNone(result)
