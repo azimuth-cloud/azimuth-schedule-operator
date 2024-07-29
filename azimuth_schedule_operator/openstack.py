@@ -197,7 +197,7 @@ class Cloud:
         """The APIs supported by the cloud."""
         return list(self._endpoints.keys())
 
-    def api_client(self, name, prefix=None):
+    def api_client(self, name, prefix=None, **kwargs):
         """Returns a client for the named API."""
         if name not in self._clients:
             self._clients[name] = Client(
@@ -205,6 +205,7 @@ class Cloud:
                 prefix=prefix,
                 auth=self._auth,
                 transport=self._transport,
+                **kwargs
             )
         return self._clients[name]
 

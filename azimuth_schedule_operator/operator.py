@@ -1,13 +1,21 @@
 import asyncio
+import base64
 import datetime
+import json
 import logging
 import os
 import sys
 
 import kopf
 
+import yaml
+
 from azimuth_schedule_operator.models import registry
-from azimuth_schedule_operator.models.v1alpha1 import schedule as schedule_crd
+from azimuth_schedule_operator.models.v1alpha1 import (
+    lease as lease_crd,
+    schedule as schedule_crd
+)
+from azimuth_schedule_operator import openstack
 from azimuth_schedule_operator.utils import k8s
 
 LOG = logging.getLogger(__name__)
@@ -55,6 +63,35 @@ async def cleanup(**_):
     if K8S_CLIENT:
         await K8S_CLIENT.aclose()
     LOG.info("Cleanup complete.")
+
+
+async def ekresource_for_model(model, subresource = None):
+    """
+    Returns an easykube resource for the given model.
+    """
+    api = K8S_CLIENT.api(f"{registry.API_GROUP}/{model._meta.version}")
+    resource = model._meta.plural_name
+    if subresource:
+        resource = f"{resource}/{subresource}"
+    return await api.resource(resource)
+
+
+async def save_instance_status(instance):
+    """
+    Save the status of the given instance.
+    """
+    ekresource = await ekresource_for_model(instance.__class__, "status")
+    data = await ekresource.replace(
+        instance.metadata.name,
+        {
+            # Include the resource version for optimistic concurrency
+            "metadata": { "resourceVersion": instance.metadata.resource_version },
+            "status": instance.status.model_dump(exclude_defaults = True),
+        },
+        namespace = instance.metadata.namespace
+    )
+    # Store the new resource version
+    instance.metadata.resource_version = data["metadata"]["resourceVersion"]
 
 
 async def get_reference(namespace: str, ref: schedule_crd.ScheduleRef):
@@ -120,3 +157,108 @@ async def schedule_check(body, namespace, **_):
 
     if not schedule.status.ref_delete_triggered:
         await check_for_delete(namespace, schedule)
+
+
+@kopf.on.create(registry.API_GROUP, "lease")
+@kopf.on.update(registry.API_GROUP, "lease", field = "spec")
+@kopf.on.resume(registry.API_GROUP, "lease")
+async def reconcile_lease(body, **_):
+    lease = lease_crd.Lease.model_validate(body)
+    # Put the lease into a pending state as soon as possible
+    if lease.status.phase == lease_crd.LeasePhase.UNKNOWN:
+        lease.status.phase = lease_crd.LeasePhase.PENDING
+        await save_instance_status(lease)
+    # Get the cloud credentials to use to create the lease
+    secrets = await K8S_CLIENT.api("v1").resource("secrets")
+    cloud_creds = await secrets.fetch(
+        lease.spec.cloud_credentials_secret_name,
+        namespace = lease.metadata.namespace
+    )
+    clouds = yaml.safe_load(base64.b64decode(cloud_creds.data["clouds.yaml"]))
+    if "cacert" in cloud_creds.data:
+        cacert = base64.b64decode(cloud_creds.data["cacert"]).decode()
+    else:
+        cacert = None
+    async with openstack.Cloud.from_clouds(clouds, "openstack", cacert) as cloud:
+        blazar_leases = cloud.api_client("reservation", timeout = 30).resource("leases")
+        blazar_lease_name = f"az-{lease.metadata.name}"
+        # First, try to find the Blazar release by name
+        blazar_lease = await anext(
+            (l async for l in blazar_leases.list() if l["name"] == blazar_lease_name),
+            None
+        )
+        # If it doesn't exist, create it
+        if not blazar_lease:
+            # Aggregate the virtual machine resource counts by name
+            flavor_counts = {}
+            for vm in lease.spec.resources.virtual_machines:
+                flavor_counts[vm.flavor_id] = flavor_counts.get(vm.flavor_id, 0) + vm.count
+            blazar_lease = await blazar_leases.create(
+                {
+                    "name": blazar_lease_name,
+                    "start_date": (
+                        lease.spec.starts_at.strftime("%Y-%m-%d %H:%M")
+                        if lease.spec.starts_at
+                        else "now"
+                    ),
+                    "end_date": lease.spec.ends_at.strftime("%Y-%m-%d %H:%M"),
+                    "reservations": [
+                        {
+                            "amount": int(count),
+                            "flavor_id": flavor_id,
+                            "resource_type": "flavor:instance",
+                            "affinity": "None",
+                        }
+                        for flavor_id, count in flavor_counts.items()
+                    ],
+                    "events": [],
+                    "before_end_date": None,
+                }
+            )
+    # Save the status of the lease
+    lease.status.phase = lease_crd.LeasePhase[blazar_lease["status"]]
+    # If the lease is active, report the flavor map
+    # This is a map from original flavor ID to reserved flavor ID
+    if lease.status.phase == lease_crd.LeasePhase.ACTIVE:
+        flavor_map = {}
+        for reservation in blazar_lease.get("reservations", []):
+            if reservation["resource_type"] != "flavor:instance":
+                continue
+            if "resource_properties" in reservation:
+                properties = json.loads(reservation["resource_properties"])
+                flavor_map[properties["id"]] = reservation["id"]
+        lease.status.flavor_map = flavor_map
+    await save_instance_status(lease)
+
+
+@kopf.on.delete(registry.API_GROUP, "lease")
+async def delete_lease(body, **_):
+    lease = lease_crd.Lease.model_validate(body)
+    # Put the lease into a deleting state as soon as possible
+    if lease.status.phase != lease_crd.LeasePhase.DELETING:
+        lease.status.phase = lease_crd.LeasePhase.DELETING
+        await save_instance_status(lease)
+    # Get the cloud credentials to use to create the lease
+    secrets = await K8S_CLIENT.api("v1").resource("secrets")
+    cloud_creds = await secrets.fetch(
+        lease.spec.cloud_credentials_secret_name,
+        namespace = lease.metadata.namespace
+    )
+    clouds = yaml.safe_load(base64.b64decode(cloud_creds.data["clouds.yaml"]))
+    if "cacert" in cloud_creds.data:
+        cacert = base64.b64decode(cloud_creds.data["cacert"]).decode()
+    else:
+        cacert = None
+    async with openstack.Cloud.from_clouds(clouds, "openstack", cacert) as cloud:
+        blazar_leases = cloud.api_client("reservation", timeout = 30).resource("leases")
+        blazar_lease_name = f"az-{lease.metadata.name}"
+        # First, try to find the Blazar release by name
+        blazar_lease = await anext(
+            (l async for l in blazar_leases.list() if l["name"] == blazar_lease_name),
+            None
+        )
+        # If there is no such lease, we are done
+        # If there is, delete it and check again in a few seconds
+        if blazar_lease:
+            await blazar_leases.delete(blazar_lease["id"])
+            raise kopf.TemporaryError("waiting for blazar lease to delete", delay = 15)
