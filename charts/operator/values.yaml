@@ -1,6 +1,6 @@
 # The operator image to use
 image:
-  repository: ghcr.io/stackhpc/azimuth-schedule-operator
+  repository: ghcr.io/azimuth-cloud/azimuth-schedule-operator
   pullPolicy: IfNotPresent
   tag: ""  # Defaults to appVersion
 
