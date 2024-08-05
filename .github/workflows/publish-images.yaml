@@ -28,7 +28,7 @@ jobs:
         id: image-meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/stackhpc/azimuth-schedule-operator
+          images: ghcr.io/azimuth-cloud/azimuth-schedule-operator
           # Produce the branch name or tag and the SHA as tags
           tags: |
             type=ref,event=branch
@@ -36,7 +36,7 @@ jobs:
             type=sha,prefix=
 
       - name: Build and push image
-        uses: stackhpc/github-actions/docker-multiarch-build-push@master
+        uses: azimuth-cloud/github-actions/docker-multiarch-build-push@master
         with:
           cache-key: azimuth-schedule-operator
           context: .
