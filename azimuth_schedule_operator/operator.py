@@ -7,6 +7,7 @@ import os
 import sys
 
 import kopf
+import httpx
 
 import yaml
 
@@ -159,6 +160,7 @@ async def schedule_check(body, namespace, **_):
         await check_for_delete(namespace, schedule)
 
 
+@kopf.timer(registry.API_GROUP, "lease", interval=CHECK_INTERVAL_SECONDS)
 @kopf.on.create(registry.API_GROUP, "lease")
 @kopf.on.update(registry.API_GROUP, "lease", field = "spec")
 @kopf.on.resume(registry.API_GROUP, "lease")
@@ -193,28 +195,36 @@ async def reconcile_lease(body, **_):
             flavor_counts = {}
             for vm in lease.spec.resources.virtual_machines:
                 flavor_counts[vm.flavor_id] = flavor_counts.get(vm.flavor_id, 0) + vm.count
-            blazar_lease = await blazar_leases.create(
-                {
-                    "name": blazar_lease_name,
-                    "start_date": (
-                        lease.spec.starts_at.strftime("%Y-%m-%d %H:%M")
-                        if lease.spec.starts_at
-                        else "now"
-                    ),
-                    "end_date": lease.spec.ends_at.strftime("%Y-%m-%d %H:%M"),
-                    "reservations": [
-                        {
-                            "amount": int(count),
-                            "flavor_id": flavor_id,
-                            "resource_type": "flavor:instance",
-                            "affinity": "None",
-                        }
-                        for flavor_id, count in flavor_counts.items()
-                    ],
-                    "events": [],
-                    "before_end_date": None,
-                }
-            )
+            try:
+                blazar_lease = await blazar_leases.create(
+                    {
+                        "name": blazar_lease_name,
+                        "start_date": (
+                            lease.spec.starts_at.strftime("%Y-%m-%d %H:%M")
+                            if lease.spec.starts_at
+                            else "now"
+                        ),
+                        "end_date": lease.spec.ends_at.strftime("%Y-%m-%d %H:%M"),
+                        "reservations": [
+                            {
+                                "amount": int(count),
+                                "flavor_id": flavor_id,
+                                "resource_type": "flavor:instance",
+                                "affinity": "None",
+                            }
+                            for flavor_id, count in flavor_counts.items()
+                        ],
+                        "events": [],
+                        "before_end_date": None,
+                    }
+                )
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 400:
+                    # TODO(johngarbutt): check for problems with the lease
+                    LOG.error(f"error creating lease: {e.response.json()}")
+                    lease.status.phase = lease_crd.LeasePhase.ERROR
+                    await save_instance_status(lease)
+                raise
     # Save the status of the lease
     lease.status.phase = lease_crd.LeasePhase[blazar_lease["status"]]
     # If the lease is active, report the flavor map
@@ -228,6 +238,8 @@ async def reconcile_lease(body, **_):
                 properties = json.loads(reservation["resource_properties"])
                 flavor_map[properties["id"]] = reservation["id"]
         lease.status.flavor_map = flavor_map
+    else:
+        LOG.info(f"lease {lease.metadata.name} is in phase {lease.status.phase}")
     await save_instance_status(lease)
 
 
