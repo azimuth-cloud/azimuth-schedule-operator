@@ -6,17 +6,17 @@ from pydantic import Field
 from kube_custom_resource import CustomResource, schema
 
 
-class VirtualMachine(schema.BaseModel):
+class Machine(schema.BaseModel):
     """
-    Represents a reservation for a virtual machine.
+    Represents a reservation for a machine.
     """
-    flavor_id: schema.constr(min_length = 1) = Field(
+    size_id: schema.constr(min_length = 1) = Field(
         ...,
-        description = "The ID of the flavor for the virtual machine."
+        description = "The ID of the size for the machine."
     )
     count: schema.conint(gt = 0) = Field(
         ...,
-        description = "The number of virtual machines of this flavor to reserve."
+        description = "The number of machines of this size to reserve."
     )
 
 
@@ -24,9 +24,9 @@ class ResourcesSpec(schema.BaseModel):
     """
     The resources that a lease is reserving.
     """
-    virtual_machines: t.List[VirtualMachine] = Field(
+    machines: t.List[Machine] = Field(
         default_factory = list,
-        description = "Virtual machine resources that should be reserved by the lease."
+        description = "Machines that should be reserved by the lease."
     )
 
 
@@ -45,9 +45,20 @@ class LeaseSpec(schema.BaseModel):
             "If no start time is given, it is assumed to start immediately."
         )
     )
-    ends_at: dt.datetime = Field(
-        ...,
-        description = "The end time for the lease."
+    ends_at: schema.Optional[dt.datetime] = Field(
+        None,
+        description = (
+            "The end time for the lease. "
+            "If no end time is given, the lease is assumed to be infinite."
+        )
+    )
+    grace_period: schema.Optional[schema.conint(ge = 0)] = Field(
+        None,
+        description = (
+            "The grace period before the end of the lease that the platform "
+            "will be given to shut down gracefully. "
+            "If not given, the operator default grace period will be used."
+        )
     )
     resources: ResourcesSpec = Field(
         ...,
@@ -81,10 +92,21 @@ class LeaseStatus(schema.BaseModel, extra = "allow"):
         LeasePhase.UNKNOWN.value,
         description = "The phase of the lease."
     )
-    flavor_map: schema.Dict[str, str] = Field(
-        default_factory = dict,
-        description = "Mapping of original flavor ID to reserved flavor ID."
+    error_message: str = Field(
+        "",
+        description = "The error message for the lease, if known."
     )
+    size_map: schema.Dict[str, str] = Field(
+        default_factory = dict,
+        description = "Mapping of original size ID to reserved size ID."
+    )
+
+    def set_phase(self, phase: LeasePhase, error_message: t.Optional[str] = None):
+        """
+        Set the phase of the lease, along with an optional error message.
+        """
+        self.phase = phase
+        self.error_message = error_message if phase == LeasePhase.ERROR else ""
 
 
 class Lease(

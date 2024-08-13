@@ -18,6 +18,10 @@ rules:
   - apiGroups: ["scheduling.azimuth.stackhpc.com"]
     resources: ["*"]
     verbs: ["*"]
+  # Allow secrets containing credentials to be read and deleted
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "delete"]
   # Allow the managed resources to be deleted by the operator
   {{- range .Values.managedResources }}
   - apiGroups:

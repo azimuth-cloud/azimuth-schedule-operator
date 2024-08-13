@@ -1,8 +1,11 @@
 import asyncio
+import base64
 import contextlib
 import urllib.parse
 
 import httpx
+
+import yaml
 
 from easykube import rest
 
@@ -12,6 +15,13 @@ class UnsupportedAuthenticationError(Exception):
 
     def __init__(self, auth_type):
         super().__init__(f"unsupported authentication type: {auth_type}")
+
+
+class ApiNotSupportedError(Exception):
+    """Raised when the requested API is not supported."""
+
+    def __init__(self, api):
+        super().__init__(f"api '{api}' is not supported")
 
 
 class Auth(httpx.Auth):
@@ -184,8 +194,13 @@ class Cloud:
 
     @property
     def is_authenticated(self):
-        """Returns True if the cloud is authenticated, False otherwise."""
+        """True if the cloud is authenticated, False otherwise."""
         return bool(self._endpoints)
+
+    @property
+    def application_credential_id(self):
+        """The ID of the application credential used to authenticate."""
+        return self._auth._application_credential_id
 
     @property
     def current_user_id(self):
@@ -195,11 +210,13 @@ class Cloud:
     @property
     def apis(self):
         """The APIs supported by the cloud."""
-        return list(self._endpoints.keys())
+        return set(self._endpoints.keys())
 
     def api_client(self, name, prefix=None, **kwargs):
         """Returns a client for the named API."""
         if name not in self._clients:
+            if name not in self._endpoints:
+                raise ApiNotSupportedError(name)
             self._clients[name] = Client(
                 base_url=self._endpoints[name],
                 prefix=prefix,
@@ -209,20 +226,31 @@ class Cloud:
             )
         return self._clients[name]
 
-    @classmethod
-    def from_clouds(cls, clouds, cloud, cacert):
-        config = clouds["clouds"][cloud]
-        if config["auth_type"] != "v3applicationcredential":
-            raise UnsupportedAuthenticationError(config["auth_type"])
-        auth = Auth(
-            config["auth"]["auth_url"],
-            config["auth"]["application_credential_id"],
-            config["auth"]["application_credential_secret"],
-        )
-        # Create a default context using the verification from the config
-        context = httpx.create_ssl_context(verify=config.get("verify", True))
-        # If a cacert was given, load it into the context
-        if cacert is not None:
-            context.load_verify_locations(cadata=cacert)
-        transport = httpx.AsyncHTTPTransport(verify=context)
-        return cls(auth, transport, config.get("interface", "public"))
+
+def from_clouds(clouds, cloud, cacert):
+    """Returns an OpenStack cloud object from the content of a clouds file."""
+    config = clouds["clouds"][cloud]
+    if config["auth_type"] != "v3applicationcredential":
+        raise UnsupportedAuthenticationError(config["auth_type"])
+    auth = Auth(
+        config["auth"]["auth_url"],
+        config["auth"]["application_credential_id"],
+        config["auth"]["application_credential_secret"],
+    )
+    # Create a default context using the verification from the config
+    context = httpx.create_ssl_context(verify=config.get("verify", True))
+    # If a cacert was given, load it into the context
+    if cacert is not None:
+        context.load_verify_locations(cadata=cacert)
+    transport = httpx.AsyncHTTPTransport(verify=context)
+    return Cloud(auth, transport, config.get("interface", "public"))
+
+
+def from_secret_data(secret_data):
+    """Returns an OpenStack cloud object from the given secret data."""
+    clouds = yaml.safe_load(base64.b64decode(secret_data["clouds.yaml"]))
+    if "cacert" in secret_data:
+        cacert = base64.b64decode(secret_data["cacert"]).decode()
+    else:
+        cacert = None
+    return from_clouds(clouds, next(c for c in clouds["clouds"]), cacert)
