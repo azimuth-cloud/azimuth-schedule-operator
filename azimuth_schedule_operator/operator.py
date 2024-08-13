@@ -6,15 +6,15 @@ import logging
 import os
 import sys
 
-import kopf
 import httpx
+import kopf
 
 import easykube
 
 from azimuth_schedule_operator.models import registry
 from azimuth_schedule_operator.models.v1alpha1 import (
     lease as lease_crd,
-    schedule as schedule_crd
+    schedule as schedule_crd,
 )
 from azimuth_schedule_operator import openstack
 from azimuth_schedule_operator.utils import k8s
@@ -26,20 +26,17 @@ CHECK_INTERVAL_SECONDS = int(
     os.environ.get(
         "AZIMUTH_SCHEDULE_CHECK_INTERVAL_SECONDS",
         # By default, check schedules and leases every 60s
-        "60"
+        "60",
     )
 )
 LEASE_CHECK_INTERVAL_SECONDS = int(
-    os.environ.get(
-        "AZIMUTH_LEASE_CHECK_INTERVAL_SECONDS",
-        CHECK_INTERVAL_SECONDS
-    )
+    os.environ.get("AZIMUTH_LEASE_CHECK_INTERVAL_SECONDS", CHECK_INTERVAL_SECONDS)
 )
 LEASE_DEFAULT_GRACE_PERIOD_SECONDS = int(
     os.environ.get(
         "AZIMUTH_LEASE_DEFAULT_GRACE_PERIOD_SECONDS",
         # Give platforms 10 minutes to delete by default
-        "600"
+        "600",
     )
 )
 
@@ -50,11 +47,11 @@ async def startup(settings, **kwargs):
     settings.persistence.finalizer = registry.API_GROUP
     # Use the annotation-based storage only (not status)
     settings.persistence.progress_storage = kopf.AnnotationsProgressStorage(
-        prefix = registry.API_GROUP
+        prefix=registry.API_GROUP
     )
     settings.persistence.diffbase_storage = kopf.AnnotationsDiffBaseStorage(
-        prefix = registry.API_GROUP,
-        key = "last-handled-configuration",
+        prefix=registry.API_GROUP,
+        key="last-handled-configuration",
     )
     # Apply kopf setting to force watches to restart periodically
     settings.watching.client_timeout = int(os.environ.get("KOPF_WATCH_TIMEOUT", "600"))
@@ -93,10 +90,8 @@ async def cleanup(**_):
     LOG.info("Cleanup complete.")
 
 
-async def ekresource_for_model(model, subresource = None):
-    """
-    Returns an easykube resource for the given model.
-    """
+async def ekresource_for_model(model, subresource=None):
+    """Returns an easykube resource for the given model."""
     api = K8S_CLIENT.api(f"{registry.API_GROUP}/{model._meta.version}")
     resource = model._meta.plural_name
     if subresource:
@@ -105,24 +100,22 @@ async def ekresource_for_model(model, subresource = None):
 
 
 async def save_instance_status(instance):
-    """
-    Save the status of the given instance.
-    """
+    """Save the status of the given instance."""
     ekresource = await ekresource_for_model(instance.__class__, "status")
     try:
         data = await ekresource.replace(
             instance.metadata.name,
             {
                 # Include the resource version for optimistic concurrency
-                "metadata": { "resourceVersion": instance.metadata.resource_version },
-                "status": instance.status.model_dump(exclude_defaults = True),
+                "metadata": {"resourceVersion": instance.metadata.resource_version},
+                "status": instance.status.model_dump(exclude_defaults=True),
             },
-            namespace = instance.metadata.namespace
+            namespace=instance.metadata.namespace,
         )
     except easykube.ApiError as exc:
         # Retry as soon as possible after a 409
         if exc.status_code == 409:
-            raise kopf.TemporaryError("conflict updating status", delay = 1)
+            raise kopf.TemporaryError("conflict updating status", delay=1)
         else:
             raise
     # Store the new resource version
@@ -201,14 +194,12 @@ async def find_blazar_lease(blazar_client, lease_name):
             async for lease in blazar_client.resource("leases").list()
             if lease["name"] == lease_name
         ),
-        None
+        None,
     )
 
 
 class BlazarLeaseCreateError(Exception):
-    """
-    Raised when there is a permanent error creating a Blazar lease.
-    """
+    """Raised when there is a permanent error creating a Blazar lease."""
 
 
 async def create_blazar_lease(blazar_client, lease_name, lease):
@@ -258,8 +249,8 @@ def get_size_map(blazar_lease):
     flavor_map = {}
     for reservation in blazar_lease.get("reservations", []):
         if (
-            reservation["resource_type"] == "flavor:instance" and
-            "resource_properties" in reservation
+            reservation["resource_type"] == "flavor:instance"
+            and "resource_properties" in reservation
         ):
             properties = json.loads(reservation["resource_properties"])
             flavor_map[properties["id"]] = reservation["id"]
@@ -283,8 +274,7 @@ async def reconcile_lease(body, logger, **_):
             logger.info("lease has no end date - setting to ACTIVE")
             lease.status.set_phase(lease_crd.LeasePhase.ACTIVE)
             lease.status.size_map = {
-                m.size_id: m.size_id
-                for m in lease.spec.resources.machines
+                m.size_id: m.size_id for m in lease.spec.resources.machines
             }
             await save_instance_status(lease)
         return
@@ -293,21 +283,21 @@ async def reconcile_lease(body, logger, **_):
     # So create a cloud instance from the referenced credential secret
     secrets = await K8S_CLIENT.api("v1").resource("secrets")
     cloud_creds = await secrets.fetch(
-        lease.spec.cloud_credentials_secret_name,
-        namespace = lease.metadata.namespace
+        lease.spec.cloud_credentials_secret_name, namespace=lease.metadata.namespace
     )
     async with openstack.from_secret_data(cloud_creds.data) as cloud:
         try:
-            blazar_client = cloud.api_client("reservation", timeout = 30)
+            blazar_client = cloud.api_client("reservation", timeout=30)
         except openstack.ApiNotSupportedError:
             # Blazar is not available
             # Just put the lease into an active state with an identity size map
             if lease.status.phase != lease_crd.LeasePhase.ACTIVE:
-                logger.info("blazar is not available on the target cloud - setting to ACTIVE")
+                logger.info(
+                    "blazar is not available on the target cloud - setting to ACTIVE"
+                )
                 lease.status.set_phase(lease_crd.LeasePhase.ACTIVE)
                 lease.status.size_map = {
-                    m.size_id: m.size_id
-                    for m in lease.spec.resources.machines
+                    m.size_id: m.size_id for m in lease.spec.resources.machines
                 }
                 await save_instance_status(lease)
             return
@@ -319,8 +309,8 @@ async def reconcile_lease(body, logger, **_):
             #
             # We only create the Blazar lease if we are in the PENDING phase
             #
-            # If we are in any other phase and the lease does not exist, then we leave the
-            # status as-is but log it. This can happen in one of three ways:
+            # If we are in any other phase and the lease does not exist, then we leave
+            # the status as-is but log it. This can happen in one of three ways:
             #
             #  1. The lease was not created due to an unrecoverable error
             #  2. The lease we created was deleted by someone else
@@ -330,9 +320,7 @@ async def reconcile_lease(body, logger, **_):
                 logger.info("creating blazar lease")
                 try:
                     blazar_lease = await create_blazar_lease(
-                        blazar_client,
-                        blazar_lease_name,
-                        lease
+                        blazar_client, blazar_lease_name, lease
                     )
                 except BlazarLeaseCreateError as exc:
                     logger.error(str(exc))
@@ -358,7 +346,7 @@ async def reconcile_lease(body, logger, **_):
     "lease",
     interval=LEASE_CHECK_INTERVAL_SECONDS,
     # This means that the timer will not run while we are modifying the resource
-    idle=LEASE_CHECK_INTERVAL_SECONDS
+    idle=LEASE_CHECK_INTERVAL_SECONDS,
 )
 async def check_lease(body, logger, **_):
     lease = lease_crd.Lease.model_validate(body)
@@ -372,12 +360,11 @@ async def check_lease(body, logger, **_):
     # So create a cloud instance from the referenced credential secret
     secrets = await K8S_CLIENT.api("v1").resource("secrets")
     cloud_creds = await secrets.fetch(
-        lease.spec.cloud_credentials_secret_name,
-        namespace = lease.metadata.namespace
+        lease.spec.cloud_credentials_secret_name, namespace=lease.metadata.namespace
     )
     async with openstack.from_secret_data(cloud_creds.data) as cloud:
         try:
-            blazar_client = cloud.api_client("reservation", timeout = 30)
+            blazar_client = cloud.api_client("reservation", timeout=30)
         except openstack.ApiNotSupportedError:
             # Blazar is not available - nothing to do
             logger.info("blazar is not available on the target cloud - nothing to do")
@@ -405,7 +392,7 @@ async def check_lease(body, logger, **_):
         else LEASE_DEFAULT_GRACE_PERIOD_SECONDS
     )
     # Calculate the threshold time at which we want to issue a delete
-    threshold = lease.spec.ends_at - datetime.timedelta(seconds = grace_period)
+    threshold = lease.spec.ends_at - datetime.timedelta(seconds=grace_period)
     # Issue the delete if the threshold time has passed
     if threshold < datetime.datetime.now(datetime.timezone.utc):
         logger.info("lease is ending within grace period - deleting owners")
@@ -414,8 +401,8 @@ async def check_lease(body, logger, **_):
             await resource.delete(
                 owner.name,
                 # Make sure that we block the owner from deleting, if configured
-                propagation_policy = "Foreground",
-                namespace = lease.metadata.namespace
+                propagation_policy="Foreground",
+                namespace=lease.metadata.namespace,
             )
     else:
         logger.info("lease is not within the grace period of ending")
@@ -427,7 +414,7 @@ async def delete_lease(body, logger, **_):
 
     # Wait until our finalizer is the only finalizer
     if any(f != registry.API_GROUP for f in lease.metadata.finalizers):
-        raise kopf.TemporaryError("waiting for finalizers to be removed", delay = 15)
+        raise kopf.TemporaryError("waiting for finalizers to be removed", delay=15)
 
     # Put the lease into a deleting state once we are able to start deleting
     if lease.status.phase != lease_crd.LeasePhase.DELETING:
@@ -439,8 +426,7 @@ async def delete_lease(body, logger, **_):
     secrets = await K8S_CLIENT.api("v1").resource("secrets")
     try:
         cloud_creds = await secrets.fetch(
-            lease.spec.cloud_credentials_secret_name,
-            namespace = lease.metadata.namespace
+            lease.spec.cloud_credentials_secret_name, namespace=lease.metadata.namespace
         )
     except easykube.ApiError as exc:
         if exc.status_code == 404:
@@ -456,13 +442,15 @@ async def delete_lease(body, logger, **_):
             # Check if there is any work to do to delete a Blazar lease
             if lease.spec.ends_at and "reservation" in cloud.apis:
                 logger.info("checking for blazar lease")
-                blazar_client = cloud.api_client("reservation", timeout = 30)
+                blazar_client = cloud.api_client("reservation", timeout=30)
                 blazar_lease_name = f"az-{lease.metadata.name}"
                 blazar_lease = await find_blazar_lease(blazar_client, blazar_lease_name)
                 if blazar_lease:
                     logger.info("deleting blazar lease")
                     await blazar_client.resource("leases").delete(blazar_lease["id"])
-                    raise kopf.TemporaryError("waiting for blazar lease to delete", delay = 15)
+                    raise kopf.TemporaryError(
+                        "waiting for blazar lease to delete", delay=15
+                    )
                 else:
                     logger.warn("blazar lease does not exist")
             else:
@@ -473,7 +461,7 @@ async def delete_lease(body, logger, **_):
             appcreds = identityapi.resource(
                 "application_credentials",
                 # appcreds are user-namespaced
-                prefix = f"users/{cloud.current_user_id}"
+                prefix=f"users/{cloud.current_user_id}",
             )
             try:
                 await appcreds.delete(cloud.application_credential_id)
@@ -486,7 +474,6 @@ async def delete_lease(body, logger, **_):
 
     # Now the appcred is gone, we can delete the secret
     await secrets.delete(
-        lease.spec.cloud_credentials_secret_name,
-        namespace = lease.metadata.namespace
+        lease.spec.cloud_credentials_secret_name, namespace=lease.metadata.namespace
     )
     logger.info("cloud credential secret deleted")

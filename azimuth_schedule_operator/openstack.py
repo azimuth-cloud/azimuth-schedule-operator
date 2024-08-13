@@ -222,7 +222,7 @@ class Cloud:
                 prefix=prefix,
                 auth=self._auth,
                 transport=self._transport,
-                **kwargs
+                **kwargs,
             )
         return self._clients[name]
 
