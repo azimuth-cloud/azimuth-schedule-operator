@@ -246,15 +246,26 @@ async def delete_blazar_lease(blazar_client, lease_name):
 
 
 def get_size_map(blazar_lease):
-    flavor_map = {}
+    """Produce a map from requested size ID to reservation size ID."""
+    size_map = {}
     for reservation in blazar_lease.get("reservations", []):
         if (
             reservation["resource_type"] == "flavor:instance"
             and "resource_properties" in reservation
         ):
             properties = json.loads(reservation["resource_properties"])
-            flavor_map[properties["id"]] = reservation["id"]
-    return flavor_map
+            size_map[properties["id"]] = reservation["id"]
+    return size_map
+
+
+async def get_size_name_map(cloud, size_map):
+    """Produce a size name map for the given size map."""
+    compute_client = cloud.api_client("compute")
+    flavor_names = {
+        flavor.id: flavor.name
+        async for flavor in compute_client.resource("flavors").list()
+    }
+    return {flavor_names[k]: flavor_names[v] for k, v in size_map.items()}
 
 
 @kopf.on.create(registry.API_GROUP, "lease")
@@ -267,39 +278,43 @@ async def reconcile_lease(body, logger, **_):
         lease.status.set_phase(lease_crd.LeasePhase.PENDING)
         await save_instance_status(lease)
 
-    # If the lease has no end date, there is not much to do
-    # We just put the lease into an active state with an identity size map
-    if not lease.spec.ends_at:
-        if lease.status.phase != lease_crd.LeasePhase.ACTIVE:
-            logger.info("lease has no end date - setting to ACTIVE")
-            lease.status.set_phase(lease_crd.LeasePhase.ACTIVE)
-            lease.status.size_map = {
-                m.size_id: m.size_id for m in lease.spec.resources.machines
-            }
-            await save_instance_status(lease)
-        return
-
-    # If the lease has an end date, we might need to do some Blazar stuff
-    # So create a cloud instance from the referenced credential secret
+    # Create a cloud instance from the referenced credential secret
     secrets = await K8S_CLIENT.api("v1").resource("secrets")
     cloud_creds = await secrets.fetch(
         lease.spec.cloud_credentials_secret_name, namespace=lease.metadata.namespace
     )
     async with openstack.from_secret_data(cloud_creds.data) as cloud:
+        # If the lease has no end date, there is not much to do
+        # We just put the lease into an active state with an identity size map
+        if not lease.spec.ends_at:
+            logger.info("lease has no end date - setting to ACTIVE")
+            lease.status.set_phase(lease_crd.LeasePhase.ACTIVE)
+            lease.status.size_map = {
+                m.size_id: m.size_id for m in lease.spec.resources.machines
+            }
+            lease.status.size_name_map = await get_size_name_map(
+                cloud, lease.status.size_map
+            )
+            await save_instance_status(lease)
+            return
+
+        # If the lease has an end date, we might need to do some Blazar stuff
         try:
             blazar_client = cloud.api_client("reservation", timeout=30)
         except openstack.ApiNotSupportedError:
             # Blazar is not available
             # Just put the lease into an active state with an identity size map
-            if lease.status.phase != lease_crd.LeasePhase.ACTIVE:
-                logger.info(
-                    "blazar is not available on the target cloud - setting to ACTIVE"
-                )
-                lease.status.set_phase(lease_crd.LeasePhase.ACTIVE)
-                lease.status.size_map = {
-                    m.size_id: m.size_id for m in lease.spec.resources.machines
-                }
-                await save_instance_status(lease)
+            logger.info(
+                "blazar is not available on the target cloud - setting to ACTIVE"
+            )
+            lease.status.set_phase(lease_crd.LeasePhase.ACTIVE)
+            lease.status.size_map = {
+                m.size_id: m.size_id for m in lease.spec.resources.machines
+            }
+            lease.status.size_name_map = await get_size_name_map(
+                cloud, lease.status.size_map
+            )
+            await save_instance_status(lease)
             return
         logger.info("checking if blazar lease exists")
         blazar_lease_name = f"az-{lease.metadata.name}"
@@ -337,6 +352,9 @@ async def reconcile_lease(body, logger, **_):
             lease.status.set_phase(lease_crd.LeasePhase[blazar_lease_status])
             if lease.status.phase == lease_crd.LeasePhase.ACTIVE:
                 lease.status.size_map = get_size_map(blazar_lease)
+                lease.status.size_name_map = await get_size_name_map(
+                    cloud, lease.status.size_map
+                )
             # Save the currrent status of the lease
             await save_instance_status(lease)
 
@@ -380,6 +398,9 @@ async def check_lease(body, logger, **_):
                 # If the lease is active, report the size map
                 if lease.status.phase == lease_crd.LeasePhase.ACTIVE:
                     lease.status.size_map = get_size_map(blazar_lease)
+                    lease.status.size_name_map = await get_size_name_map(
+                        cloud, lease.status.size_map
+                    )
                 await save_instance_status(lease)
             else:
                 phase = lease.status.phase.name

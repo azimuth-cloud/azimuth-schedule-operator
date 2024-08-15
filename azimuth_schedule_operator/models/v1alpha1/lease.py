@@ -89,6 +89,10 @@ class LeaseStatus(schema.BaseModel, extra="allow"):
         default_factory=dict,
         description="Mapping of original size ID to reserved size ID.",
     )
+    size_name_map: schema.Dict[str, str] = Field(
+        default_factory=dict,
+        description="Mapping of original size name to reserved size name.",
+    )
 
     def set_phase(self, phase: LeasePhase, error_message: t.Optional[str] = None):
         """Set the phase of the lease, along with an optional error message."""
