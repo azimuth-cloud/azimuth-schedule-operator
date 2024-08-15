@@ -268,6 +268,29 @@ async def get_size_name_map(cloud, size_map):
     return {flavor_names[k]: flavor_names[v] for k, v in size_map.items()}
 
 
+async def update_lease_status_no_blazar(cloud, lease):
+    """Updates the lease status when Blazar is not used for the lease."""
+    if lease.spec.starts_at:
+        now = datetime.datetime.now(datetime.timezone.utc)
+        lease_started = now >= lease.spec.starts_at
+    else:
+        # No start date means start now
+        lease_started = True
+    if lease_started:
+        lease.status.set_phase(lease_crd.LeasePhase.ACTIVE)
+        lease.status.size_map = {
+            m.size_id: m.size_id
+            for m in lease.spec.resources.machines
+        }
+        lease.status.size_name_map = await get_size_name_map(
+            cloud,
+            lease.status.size_map
+        )
+    else:
+        lease.status.set_phase(lease_crd.LeasePhase.PENDING)
+    await save_instance_status(lease)
+
+
 @kopf.on.create(registry.API_GROUP, "lease")
 @kopf.on.resume(registry.API_GROUP, "lease")
 async def reconcile_lease(body, logger, **_):
@@ -284,18 +307,10 @@ async def reconcile_lease(body, logger, **_):
         lease.spec.cloud_credentials_secret_name, namespace=lease.metadata.namespace
     )
     async with openstack.from_secret_data(cloud_creds.data) as cloud:
-        # If the lease has no end date, there is not much to do
-        # We just put the lease into an active state with an identity size map
+        # If the lease has no end date, we don't attempt to use Blazar
         if not lease.spec.ends_at:
-            logger.info("lease has no end date - setting to ACTIVE")
-            lease.status.set_phase(lease_crd.LeasePhase.ACTIVE)
-            lease.status.size_map = {
-                m.size_id: m.size_id for m in lease.spec.resources.machines
-            }
-            lease.status.size_name_map = await get_size_name_map(
-                cloud, lease.status.size_map
-            )
-            await save_instance_status(lease)
+            logger.info("lease has no end date")
+            await update_lease_status_no_blazar(cloud, lease)
             return
 
         # If the lease has an end date, we might need to do some Blazar stuff
@@ -303,18 +318,9 @@ async def reconcile_lease(body, logger, **_):
             blazar_client = cloud.api_client("reservation", timeout=30)
         except openstack.ApiNotSupportedError:
             # Blazar is not available
-            # Just put the lease into an active state with an identity size map
-            logger.info(
-                "blazar is not available on the target cloud - setting to ACTIVE"
-            )
-            lease.status.set_phase(lease_crd.LeasePhase.ACTIVE)
-            lease.status.size_map = {
-                m.size_id: m.size_id for m in lease.spec.resources.machines
-            }
-            lease.status.size_name_map = await get_size_name_map(
-                cloud, lease.status.size_map
-            )
-            await save_instance_status(lease)
+            # We just control the phase based on the start and end times
+            logger.info("blazar is not available on the target cloud")
+            await update_lease_status_no_blazar(cloud, lease)
             return
         logger.info("checking if blazar lease exists")
         blazar_lease_name = f"az-{lease.metadata.name}"
@@ -369,23 +375,22 @@ async def reconcile_lease(body, logger, **_):
 async def check_lease(body, logger, **_):
     lease = lease_crd.Lease.model_validate(body)
 
-    # If the lease has no end date, there is nothing to do
-    # We don't even need to check if we need to trigger deletion of the owner
-    if not lease.spec.ends_at:
-        return
-
-    # If the lease has an end date, we need to check the status of the Blazar lease
-    # So create a cloud instance from the referenced credential secret
+    # Create a cloud instance from the referenced credential secret
     secrets = await K8S_CLIENT.api("v1").resource("secrets")
     cloud_creds = await secrets.fetch(
         lease.spec.cloud_credentials_secret_name, namespace=lease.metadata.namespace
     )
     async with openstack.from_secret_data(cloud_creds.data) as cloud:
+        if not lease.spec.ends_at:
+            await update_lease_status_no_blazar(cloud, lease)
+            return
+
+        # If the lease has an end date, we need to check the status of the Blazar lease
         try:
             blazar_client = cloud.api_client("reservation", timeout=30)
         except openstack.ApiNotSupportedError:
-            # Blazar is not available - nothing to do
-            logger.info("blazar is not available on the target cloud - nothing to do")
+            logger.info("blazar is not available on the target cloud")
+            await update_lease_status_no_blazar(cloud, lease)
         else:
             logger.info("checking if blazar lease exists")
             blazar_lease_name = f"az-{lease.metadata.name}"
