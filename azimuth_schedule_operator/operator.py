@@ -279,12 +279,10 @@ async def update_lease_status_no_blazar(cloud, lease):
     if lease_started:
         lease.status.set_phase(lease_crd.LeasePhase.ACTIVE)
         lease.status.size_map = {
-            m.size_id: m.size_id
-            for m in lease.spec.resources.machines
+            m.size_id: m.size_id for m in lease.spec.resources.machines
         }
         lease.status.size_name_map = await get_size_name_map(
-            cloud,
-            lease.status.size_map
+            cloud, lease.status.size_map
         )
     else:
         lease.status.set_phase(lease_crd.LeasePhase.PENDING)
