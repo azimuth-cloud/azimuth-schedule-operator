@@ -1,0 +1,23 @@
+apiVersion: scheduling.azimuth.stackhpc.com/v1alpha1
+kind: Lease
+metadata:
+  name: {{ .Env.LEASE_NAME }}
+  {{- if getenv "OWNER_UID" }}
+  ownerReferences:
+    - apiVersion: v1
+      kind: ConfigMap
+      name: {{ .Env.LEASE_NAME }}
+      uid: {{ .Env.OWNER_UID }}
+  {{- end }}
+spec:
+  cloudCredentialsSecretName: {{ .Env.LEASE_NAME }}
+  {{- if getenv "START_TIME" }}
+  startsAt: {{ .Env.START_TIME }}
+  {{- end }}
+  {{- if getenv "END_TIME" }}
+  endsAt: {{ .Env.END_TIME }}
+  {{- end }}
+  resources:
+    machines:
+      - sizeId: d2
+        count: 2
