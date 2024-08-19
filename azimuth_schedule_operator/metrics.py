@@ -6,6 +6,7 @@ from aiohttp import web
 import easykube
 
 from .models import registry
+from .models.v1alpha1 import lease as lease_crd
 
 
 class Metric:
@@ -72,6 +73,40 @@ class ScheduleDeleteTriggered(ScheduleMetric):
         return 1 if obj.get("status", {}).get("refDeleteTriggered", False) else 0
 
 
+class LeaseMetric(Metric):
+    prefix = "azimuth_lease"
+
+    def labels(self, obj):
+        return {
+            "lease_namespace": obj.metadata.namespace,
+            "lease_name": obj.metadata.name,
+        }
+
+
+class LeasePhase(LeaseMetric):
+    suffix = "phase"
+    description = "The phase of the lease"
+
+    def labels(self, obj):
+        return {
+            **super().labels(obj),
+            "phase": obj.get("status", {}).get("phase", "Unknown"),
+        }
+
+
+class LeaseEndsAt(LeaseMetric):
+    suffix = "ends_at"
+    type = "gauge"
+    description = "The end time of the lease"
+
+    def value(self, obj):
+        lease = lease_crd.Lease.model_validate(obj)
+        if lease.spec.ends_at:
+            return lease.spec.ends_at.timestamp()
+        else:
+            return -1
+
+
 def escape(content):
     """Escape the given content for use in metric output."""
     return content.replace("\\", r"\\").replace("\n", r"\n").replace('"', r"\"")
@@ -116,6 +151,10 @@ def render_openmetrics(*metrics):
 
 METRICS = {
     registry.API_GROUP: {
+        "leases": [
+            LeasePhase,
+            LeaseEndsAt,
+        ],
         "schedules": [
             ScheduleRefFound,
             ScheduleDeleteTriggered,
