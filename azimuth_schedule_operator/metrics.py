@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import functools
 
 from aiohttp import web
@@ -6,7 +7,6 @@ from aiohttp import web
 import easykube
 
 from .models import registry
-from .models.v1alpha1 import lease as lease_crd
 
 
 class Metric:
@@ -94,15 +94,26 @@ class LeasePhase(LeaseMetric):
         }
 
 
+class LeaseStartsAt(LeaseMetric):
+    suffix = "starts_at"
+    type = "gauge"
+    description = "The start time of the lease"
+
+    def value(self, obj):
+        created_at = obj.metadata["creationTimestamp"]
+        starts_at = obj.get("spec", {}).get("startsAt", created_at)
+        return datetime.datetime.fromisoformat(starts_at).timestamp()
+
+
 class LeaseEndsAt(LeaseMetric):
     suffix = "ends_at"
     type = "gauge"
     description = "The end time of the lease"
 
     def value(self, obj):
-        lease = lease_crd.Lease.model_validate(obj)
-        if lease.spec.ends_at:
-            return lease.spec.ends_at.timestamp()
+        ends_at = obj.get("spec", {}).get("endsAt")
+        if ends_at:
+            return datetime.datetime.fromisoformat(ends_at).timestamp()
         else:
             return -1
 
