@@ -39,6 +39,10 @@ LEASE_DEFAULT_GRACE_PERIOD_SECONDS = int(
         "600",
     )
 )
+# Indicates whether leases should use Blazar
+# Valid values are "yes", "no" and "auto"
+# The default is "auto", which means Blazar will be used iff it is available
+LEASE_BLAZAR_ENABLED = os.environ.get("AZIMUTH_LEASE_BLAZAR_ENABLED", "auto")
 
 
 @kopf.on.startup()
@@ -198,6 +202,14 @@ async def find_blazar_lease(blazar_client, lease_name):
     )
 
 
+def blazar_enabled(cloud):
+    """Returns True if Blazar should be used, False otherwise."""
+    return (
+        LEASE_BLAZAR_ENABLED == "yes" or
+        (LEASE_BLAZAR_ENABLED == "auto" and "reservation" in cloud.apis)
+    )
+
+
 class BlazarLeaseCreateError(Exception):
     """Raised when there is a permanent error creating a Blazar lease."""
 
@@ -312,55 +324,56 @@ async def reconcile_lease(body, logger, **_):
             return
 
         # If the lease has an end date, we might need to do some Blazar stuff
-        try:
+        if blazar_enabled(cloud):
             blazar_client = cloud.api_client("reservation", timeout=30)
-        except openstack.ApiNotSupportedError:
-            # Blazar is not available
+            logger.info("checking if blazar lease exists")
+            blazar_lease_name = f"az-{lease.metadata.name}"
+            blazar_lease = await find_blazar_lease(blazar_client, blazar_lease_name)
+            if not blazar_lease:
+                # NOTE(mkjpryor)
+                #
+                # We only create the Blazar lease if we are in the PENDING phase
+                #
+                # If we are in any other phase and the lease does not exist, then we leave
+                # the status as-is but log it. This can happen in one of three ways:
+                #
+                #  1. The lease was not created due to an unrecoverable error
+                #  2. The lease we created was deleted by someone else
+                #  3. Blazar has been enabled on a cloud after a lease has already been
+                #     processed using the non-Blazar code path
+                if lease.status.phase == lease_crd.LeasePhase.PENDING:
+                    logger.info("creating blazar lease")
+                    try:
+                        blazar_lease = await create_blazar_lease(
+                            blazar_client, blazar_lease_name, lease
+                        )
+                    except BlazarLeaseCreateError as exc:
+                        logger.error(str(exc))
+                        lease.status.set_phase(lease_crd.LeasePhase.ERROR, str(exc))
+                        await save_instance_status(lease)
+                        return
+                else:
+                    phase = lease.status.phase.name
+                    logger.warn(f"phase is {phase} but blazar lease does not exist")
+            # Set the status from the created lease
+            if blazar_lease:
+                blazar_lease_status = blazar_lease["status"]
+                logger.info(f"blazar lease has status '{blazar_lease_status}'")
+                lease.status.set_phase(lease_crd.LeasePhase[blazar_lease_status])
+                if lease.status.phase == lease_crd.LeasePhase.ACTIVE:
+                    lease.status.size_map = get_size_map(blazar_lease)
+                    lease.status.size_name_map = await get_size_name_map(
+                        cloud, lease.status.size_map
+                    )
+                # Save the currrent status of the lease
+                await save_instance_status(lease)
+        else:
+            # We are not using Blazar
             # We just control the phase based on the start and end times
-            logger.info("blazar is not available on the target cloud")
+            logger.info("not attempting to use blazar")
             await update_lease_status_no_blazar(cloud, lease)
             return
-        logger.info("checking if blazar lease exists")
-        blazar_lease_name = f"az-{lease.metadata.name}"
-        blazar_lease = await find_blazar_lease(blazar_client, blazar_lease_name)
-        if not blazar_lease:
-            # NOTE(mkjpryor)
-            #
-            # We only create the Blazar lease if we are in the PENDING phase
-            #
-            # If we are in any other phase and the lease does not exist, then we leave
-            # the status as-is but log it. This can happen in one of three ways:
-            #
-            #  1. The lease was not created due to an unrecoverable error
-            #  2. The lease we created was deleted by someone else
-            #  3. Blazar has been enabled on a cloud after a lease has already been
-            #     processed using the non-Blazar code path
-            if lease.status.phase == lease_crd.LeasePhase.PENDING:
-                logger.info("creating blazar lease")
-                try:
-                    blazar_lease = await create_blazar_lease(
-                        blazar_client, blazar_lease_name, lease
-                    )
-                except BlazarLeaseCreateError as exc:
-                    logger.error(str(exc))
-                    lease.status.set_phase(lease_crd.LeasePhase.ERROR, str(exc))
-                    await save_instance_status(lease)
-                    return
-            else:
-                phase = lease.status.phase.name
-                logger.warn(f"phase is {phase} but blazar lease does not exist")
-        # Set the status from the created lease
-        if blazar_lease:
-            blazar_lease_status = blazar_lease["status"]
-            logger.info(f"blazar lease has status '{blazar_lease_status}'")
-            lease.status.set_phase(lease_crd.LeasePhase[blazar_lease_status])
-            if lease.status.phase == lease_crd.LeasePhase.ACTIVE:
-                lease.status.size_map = get_size_map(blazar_lease)
-                lease.status.size_name_map = await get_size_name_map(
-                    cloud, lease.status.size_map
-                )
-            # Save the currrent status of the lease
-            await save_instance_status(lease)
+
 
 
 @kopf.timer(
@@ -383,13 +396,9 @@ async def check_lease(body, logger, **_):
             await update_lease_status_no_blazar(cloud, lease)
             return
 
-        # If the lease has an end date, we need to check the status of the Blazar lease
-        try:
+        # If the lease has an end date, we may need to contact Blazar
+        if blazar_enabled(cloud):
             blazar_client = cloud.api_client("reservation", timeout=30)
-        except openstack.ApiNotSupportedError:
-            logger.info("blazar is not available on the target cloud")
-            await update_lease_status_no_blazar(cloud, lease)
-        else:
             logger.info("checking if blazar lease exists")
             blazar_lease_name = f"az-{lease.metadata.name}"
             blazar_lease = await find_blazar_lease(blazar_client, blazar_lease_name)
@@ -408,6 +417,9 @@ async def check_lease(body, logger, **_):
             else:
                 phase = lease.status.phase.name
                 logger.warn(f"phase is {phase} but blazar lease does not exist")
+        else:
+            logger.info("blazar is not available on the target cloud")
+            await update_lease_status_no_blazar(cloud, lease)
 
     # Calculate the grace period before the end of the lease that we want to use
     grace_period = (
@@ -464,7 +476,7 @@ async def delete_lease(body, logger, **_):
         # In that case, the cloud will report as unauthenticated
         if cloud.is_authenticated:
             # Check if there is any work to do to delete a Blazar lease
-            if lease.spec.ends_at and "reservation" in cloud.apis:
+            if lease.spec.ends_at and blazar_enabled(cloud):
                 logger.info("checking for blazar lease")
                 blazar_client = cloud.api_client("reservation", timeout=30)
                 blazar_lease_name = f"az-{lease.metadata.name}"

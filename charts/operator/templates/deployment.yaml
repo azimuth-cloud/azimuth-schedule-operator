@@ -24,6 +24,15 @@ spec:
           securityContext: {{ toYaml .Values.securityContext | nindent 12 }}
           image: {{ printf "%s:%s" .Values.image.repository (default .Chart.AppVersion .Values.image.tag) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: AZIMUTH_SCHEDULE_CHECK_INTERVAL_SECONDS
+              value: {{ quote .Values.config.checkInterval }}
+            - name: AZIMUTH_LEASE_CHECK_INTERVAL_SECONDS
+              value: {{ quote .Values.config.checkInterval }}
+            - name: AZIMUTH_LEASE_DEFAULT_GRACE_PERIOD_SECONDS
+              value: {{ quote .Values.config.defaultGracePeriod }}
+            - name: AZIMUTH_LEASE_BLAZAR_ENABLED
+              value: {{ quote .Values.config.blazarEnabled }}
           ports:
             - name: metrics
               containerPort: 8080
