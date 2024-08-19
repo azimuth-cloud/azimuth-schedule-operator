@@ -20,4 +20,17 @@ spec:
             summary: Azimuth schedule has not found its ref for longer than 15 mins.
           labels:
             severity: warning
+
+        - alert: AzimuthLeaseNotPendingOrActive
+          expr: >-
+            sum(azimuth_lease_phase{phase!~"Pending|Active"}) by(lease_namespace, lease_name) > 0
+          for: 1h
+          annotations:
+            description: >-
+              Azimuth lease
+              {{ "{{" }} $labels.lease_namespace {{ "}}" }}/{{ "{{" }} $labels.lease_name {{ "}}" }}
+              has been in a state other than Pending or Active for longer than one hour.
+            summary: Azimuth lease has been in an unstable state for more than one hour.
+          labels:
+            severity: warning
 {{- end }}
