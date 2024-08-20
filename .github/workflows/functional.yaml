@@ -19,13 +19,13 @@ jobs:
           set -eo pipefail
           curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Install gomplate
         run: |
           go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest
           gomplate --version
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
 
       - name: Run functional tests
         timeout-minutes: 15
