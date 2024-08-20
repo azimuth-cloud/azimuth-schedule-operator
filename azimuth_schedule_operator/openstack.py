@@ -173,7 +173,7 @@ class Cloud:
         )
         # We have to slightly artifically create the catalog URL as we don't
         # benefit from the prefix handling that the resources use
-        catalog_url = self._auth.url.lstrip("/") + "/v3/auth/catalog"
+        catalog_url = self._auth.url.rstrip("/") + "/v3/auth/catalog"
         try:
             response = await client.get(catalog_url)
         except httpx.HTTPStatusError as exc:
