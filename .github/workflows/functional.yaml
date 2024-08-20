@@ -32,6 +32,9 @@ jobs:
             go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest
           gomplate --version
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Run functional tests
         timeout-minutes: 15
         run: |
