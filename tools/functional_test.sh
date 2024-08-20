@@ -24,7 +24,7 @@ kubectl get crds
 #####
 # Test the deprecated schedule CRD
 #####
-export AFTER=$(gdate --date="-1 hour" +"%Y-%m-%dT%H:%M:%SZ")
+export AFTER=$(date --date="-1 hour" +"%Y-%m-%dT%H:%M:%SZ")
 envsubst < $SCRIPT_DIR/test_schedule.yaml | kubectl apply -f -
 kubectl wait --for=jsonpath='{.status.refExists}'=true schedule caas-mycluster
 # ensure updatedAt is written out
@@ -38,7 +38,7 @@ JOB_ID="${GITHUB_JOB_ID:-test}"
 
 get_date() (
     set +x -e
-    TZ=UTC gdate --date="$1" +"%Y-%m-%dT%H:%M:%SZ"
+    TZ=UTC date --date="$1" +"%Y-%m-%dT%H:%M:%SZ"
 )
 
 
@@ -103,14 +103,12 @@ verify_configmap_deleted() (
 
 create_lease() (
     set +x -e
-    docker run --rm -i \
-      -e LEASE_NAME="$1" \
-      -e OWNER_UID="$2" \
-      -e END_TIME="$3" \
-      -e START_TIME="$4" \
-      hairyhenderson/gomplate:stable \
-        < "$SCRIPT_DIR/lease.yaml" | \
-      kubectl apply -f -
+    LEASE_NAME="$1" \
+    OWNER_UID="$2" \
+    END_TIME="$3" \
+    START_TIME="$4" \
+    gomplate < "$SCRIPT_DIR/lease.yaml" | \
+    kubectl apply -f -
 )
 
 

@@ -17,7 +17,10 @@ jobs:
       - name: Install k3s
         run: |
           set -eo pipefail
-          curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -
+          curl -sfL https://get.k3s.io | bash -s - --disable traefik
+          mkdir $HOME/.kube
+          sudo cp /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
+          sudo chown $USER $HOME/.kube/config
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
