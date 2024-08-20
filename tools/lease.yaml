@@ -19,5 +19,5 @@ spec:
   {{- end }}
   resources:
     machines:
-      - sizeId: d2
+      - sizeId: d2  # This flavor is valid for devstack
         count: 2

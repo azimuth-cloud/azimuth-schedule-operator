@@ -136,9 +136,10 @@ class Client(rest.AsyncClient):
         url = urllib.parse.urlsplit(base_url)
         # Initialise the client with the scheme/host
         super().__init__(base_url=f"{url.scheme}://{url.netloc}", **kwargs)
-        # If another prefix is not given, use the path from the base URL as the prefix
-        # This ensures things like pagination work nicely without duplicating the prefix
-        self._prefix = prefix or url.path
+        # Add the path to the given prefix to use as the full prefix
+        # Not having this on the base URL ensures pagination works without
+        # duplicating the prefix
+        self._prefix = "/".join([url.path.rstrip("/"), (prefix or "").lstrip("/")])
 
     def __aenter__(self):
         # Prevent individual clients from being used in a context manager
@@ -170,11 +171,8 @@ class Cloud:
         client = Client(
             base_url=self._auth.url, auth=self._auth, transport=self._transport
         )
-        # We have to slightly artifically create the catalog URL as we don't
-        # benefit from the prefix handling that the resources use
-        catalog_url = self._auth.url.lstrip("/") + "/v3/auth/catalog"
         try:
-            response = await client.get(catalog_url)
+            response = await client.get("/v3/auth/catalog")
         except httpx.HTTPStatusError as exc:
             # If the auth fails, we just have an empty app catalog
             if exc.response.status_code == 404:

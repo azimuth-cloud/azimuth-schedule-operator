@@ -21,10 +21,17 @@ helm upgrade azimuth-schedule-operator ./charts/operator \
 until [ `kubectl get crds | grep schedules.scheduling.azimuth.stackhpc.com | wc -l` -eq 1 ]; do echo "wait for crds"; sleep 5; done
 kubectl get crds
 
+
+get_date() (
+    set +x -e
+    TZ=UTC date --date="$1" +"%Y-%m-%dT%H:%M:%SZ"
+)
+
+
 #####
 # Test the deprecated schedule CRD
 #####
-export AFTER=$(date --date="-1 hour" +"%Y-%m-%dT%H:%M:%SZ")
+export AFTER="$(get_date "-1 hour")"
 envsubst < $SCRIPT_DIR/test_schedule.yaml | kubectl apply -f -
 kubectl wait --for=jsonpath='{.status.refExists}'=true schedule caas-mycluster
 # ensure updatedAt is written out
@@ -34,12 +41,6 @@ kubectl get schedule caas-mycluster -o yaml
 
 
 JOB_ID="${GITHUB_JOB_ID:-test}"
-
-
-get_date() (
-    set +x -e
-    TZ=UTC date --date="$1" +"%Y-%m-%dT%H:%M:%SZ"
-)
 
 
 create_credential_secret() (
@@ -102,13 +103,13 @@ verify_configmap_deleted() (
 
 
 create_lease() (
-    set +x -e
+    set +x -eo pipefail
     LEASE_NAME="$1" \
     OWNER_UID="$2" \
     END_TIME="$3" \
     START_TIME="$4" \
     gomplate < "$SCRIPT_DIR/lease.yaml" | \
-    kubectl apply -f -
+      kubectl apply -f -
 )
 
 
