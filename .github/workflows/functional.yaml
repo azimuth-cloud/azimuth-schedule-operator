@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Deploy devstack
         uses: EmilienM/devstack-action@v0.15
 
@@ -25,10 +28,16 @@ jobs:
           sudo cp /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
           sudo chown $USER $HOME/.kube/config
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Install gomplate
         run: |
           go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest
           gomplate --version
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: Run functional tests
         timeout-minutes: 15
