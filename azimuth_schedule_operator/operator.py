@@ -204,9 +204,8 @@ async def find_blazar_lease(blazar_client, lease_name):
 
 def blazar_enabled(cloud):
     """Returns True if Blazar should be used, False otherwise."""
-    return (
-        LEASE_BLAZAR_ENABLED == "yes" or
-        (LEASE_BLAZAR_ENABLED == "auto" and "reservation" in cloud.apis)
+    return LEASE_BLAZAR_ENABLED == "yes" or (
+        LEASE_BLAZAR_ENABLED == "auto" and "reservation" in cloud.apis
     )
 
 
@@ -334,8 +333,9 @@ async def reconcile_lease(body, logger, **_):
                 #
                 # We only create the Blazar lease if we are in the PENDING phase
                 #
-                # If we are in any other phase and the lease does not exist, then we leave
-                # the status as-is but log it. This can happen in one of three ways:
+                # If we are in any other phase and the lease does not exist, then we
+                # leave the status as-is but log it. This can happen in one of three
+                # ways:
                 #
                 #  1. The lease was not created due to an unrecoverable error
                 #  2. The lease we created was deleted by someone else
@@ -373,7 +373,6 @@ async def reconcile_lease(body, logger, **_):
             logger.info("not attempting to use blazar")
             await update_lease_status_no_blazar(cloud, lease)
             return
-
 
 
 @kopf.timer(
