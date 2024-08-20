@@ -418,7 +418,7 @@ async def check_lease(body, logger, **_):
                 phase = lease.status.phase.name
                 logger.warn(f"phase is {phase} but blazar lease does not exist")
         else:
-            logger.info("blazar is not available on the target cloud")
+            logger.info("not attempting to use blazar")
             await update_lease_status_no_blazar(cloud, lease)
 
     # Calculate the grace period before the end of the lease that we want to use
