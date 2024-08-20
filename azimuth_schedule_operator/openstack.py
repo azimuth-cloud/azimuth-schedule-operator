@@ -171,8 +171,11 @@ class Cloud:
         client = Client(
             base_url=self._auth.url, auth=self._auth, transport=self._transport
         )
+        # We have to slightly artifically create the catalog URL as we don't
+        # benefit from the prefix handling that the resources use
+        catalog_url = self._auth.url.lstrip("/") + "/v3/auth/catalog"
         try:
-            response = await client.get("/v3/auth/catalog")
+            response = await client.get(catalog_url)
         except httpx.HTTPStatusError as exc:
             # If the auth fails, we just have an empty app catalog
             if exc.response.status_code == 404:
