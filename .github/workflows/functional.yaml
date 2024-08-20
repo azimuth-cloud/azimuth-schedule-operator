@@ -14,6 +14,9 @@ jobs:
       - name: Deploy devstack
         uses: EmilienM/devstack-action@v0.15
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Install k3s
         run: |
           set -eo pipefail
@@ -21,9 +24,6 @@ jobs:
           mkdir $HOME/.kube
           sudo cp /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
           sudo chown $USER $HOME/.kube/config
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
 
       - name: Install gomplate
         run: |
