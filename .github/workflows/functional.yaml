@@ -26,17 +26,11 @@ jobs:
           sudo cp /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
           sudo chown $USER $HOME/.kube/config
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
       - name: Install gomplate
         run: |
           GOBIN=/usr/local/bin \
             go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest
           gomplate --version
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
 
       - name: Run functional tests
         timeout-minutes: 15

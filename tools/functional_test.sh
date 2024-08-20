@@ -146,6 +146,8 @@ cleanup() {
     set +xe
     echo "Cleaning up resources..."
     kubectl delete lease.scheduling --all
+    # for debugging get the logs from the operator
+    kubectl logs deployment/azimuth-schedule-operator
 }
 trap cleanup EXIT
 
@@ -202,6 +204,3 @@ verify_credential_deleted lease-start-end
 #####
 # TODO(mkjpryor) Test the lease CRD with Blazar
 #####
-
-# for debugging get the logs from the operator
-kubectl logs deployment/azimuth-schedule-operator
