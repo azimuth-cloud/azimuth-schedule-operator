@@ -204,9 +204,17 @@ async def find_blazar_lease(blazar_client, lease_name):
 
 def blazar_enabled(cloud):
     """Returns True if Blazar should be used, False otherwise."""
-    return LEASE_BLAZAR_ENABLED == "yes" or (
-        LEASE_BLAZAR_ENABLED == "auto" and "reservation" in cloud.apis
-    )
+    if LEASE_BLAZAR_ENABLED == "yes":
+        return True
+    elif LEASE_BLAZAR_ENABLED == "auto":
+        try:
+            _ = cloud.api_client("reservation")
+        except openstack.ApiNotSupportedError:
+            return False
+        else:
+            return True
+    else:
+        return False
 
 
 class BlazarLeaseCreateError(Exception):
@@ -245,15 +253,11 @@ async def create_blazar_lease(blazar_client, lease_name, lease):
         if exc.response.status_code == 400:
             try:
                 message = exc.response.json()["error_message"]
-            except (TypeError, KeyError):
+            except (json.JSONDecodeError, TypeError, KeyError):
                 message = exc.response.text
             raise BlazarLeaseCreateError(f"error creating blazar lease - {message}")
         else:
             raise
-
-
-async def delete_blazar_lease(blazar_client, lease_name):
-    await blazar_client.resource("leases")
 
 
 def get_size_map(blazar_lease):
@@ -276,7 +280,13 @@ async def get_size_name_map(cloud, size_map):
         flavor.id: flavor.name
         async for flavor in compute_client.resource("flavors").list()
     }
-    return {flavor_names[k]: flavor_names[v] for k, v in size_map.items()}
+    size_name_map = {}
+    for original_id, new_id in size_map.items():
+        try:
+            size_name_map[flavor_names[original_id]] = flavor_names[new_id]
+        except KeyError:
+            pass
+    return size_name_map
 
 
 async def update_lease_status_no_blazar(cloud, lease):
@@ -297,7 +307,6 @@ async def update_lease_status_no_blazar(cloud, lease):
         )
     else:
         lease.status.set_phase(lease_crd.LeasePhase.PENDING)
-    await save_instance_status(lease)
 
 
 @kopf.on.create(registry.API_GROUP, "lease")
@@ -320,6 +329,7 @@ async def reconcile_lease(body, logger, **_):
         if not lease.spec.ends_at:
             logger.info("lease has no end date")
             await update_lease_status_no_blazar(cloud, lease)
+            await save_instance_status(lease)
             return
 
         # If the lease has an end date, we might need to do some Blazar stuff
@@ -372,6 +382,7 @@ async def reconcile_lease(body, logger, **_):
             # We just control the phase based on the start and end times
             logger.info("not attempting to use blazar")
             await update_lease_status_no_blazar(cloud, lease)
+            await save_instance_status(lease)
             return
 
 
@@ -393,6 +404,7 @@ async def check_lease(body, logger, **_):
     async with openstack.from_secret_data(cloud_creds.data) as cloud:
         if not lease.spec.ends_at:
             await update_lease_status_no_blazar(cloud, lease)
+            await save_instance_status(lease)
             return
 
         # If the lease has an end date, we may need to contact Blazar
@@ -419,6 +431,7 @@ async def check_lease(body, logger, **_):
         else:
             logger.info("not attempting to use blazar")
             await update_lease_status_no_blazar(cloud, lease)
+            await save_instance_status(lease)
 
     # Calculate the grace period before the end of the lease that we want to use
     grace_period = (

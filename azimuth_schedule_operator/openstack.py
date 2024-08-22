@@ -211,11 +211,6 @@ class Cloud:
         """The ID of the current user."""
         return self._auth._user_id
 
-    @property
-    def apis(self):
-        """The APIs supported by the cloud."""
-        return set(self._endpoints.keys())
-
     def api_client(self, name, prefix=None, **kwargs):
         """Returns a client for the named API."""
         if name not in self._clients:

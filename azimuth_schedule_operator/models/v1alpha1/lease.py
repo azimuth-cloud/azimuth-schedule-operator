@@ -79,9 +79,7 @@ class LeasePhase(str, schema.Enum):
 class LeaseStatus(schema.BaseModel, extra="allow"):
     """The status of a lease."""
 
-    phase: LeasePhase = Field(
-        LeasePhase.UNKNOWN.value, description="The phase of the lease."
-    )
+    phase: LeasePhase = Field(LeasePhase.UNKNOWN, description="The phase of the lease.")
     error_message: str = Field(
         "", description="The error message for the lease, if known."
     )
