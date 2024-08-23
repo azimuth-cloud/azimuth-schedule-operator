@@ -6,7 +6,7 @@ from azimuth_schedule_operator.models.v1alpha1 import schedule as schedule_crd
 from azimuth_schedule_operator import operator
 
 
-class TestOperator(unittest.IsolatedAsyncioTestCase):
+class TestSchedule(unittest.IsolatedAsyncioTestCase):
     def _generate_fake_crd(self, name):
         plural_name, api_group = name.split(".", maxsplit=1)
         return {

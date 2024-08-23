@@ -1,3 +1,13 @@
+# Configuration for the operator
+config:
+  # Indicates whether Blazar leases should be used
+  # Valid values are yes, no or auto, AS STRINGS
+  blazarEnabled: "auto"
+  # The check interval for the operator timers
+  checkInterval: 60
+  # The default grace period for leases
+  defaultGracePeriod: 600
+
 # The operator image to use
 image:
   repository: ghcr.io/azimuth-cloud/azimuth-schedule-operator

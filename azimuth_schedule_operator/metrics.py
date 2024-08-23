@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import functools
 
 from aiohttp import web
@@ -72,6 +73,51 @@ class ScheduleDeleteTriggered(ScheduleMetric):
         return 1 if obj.get("status", {}).get("refDeleteTriggered", False) else 0
 
 
+class LeaseMetric(Metric):
+    prefix = "azimuth_lease"
+
+    def labels(self, obj):
+        return {
+            "lease_namespace": obj.metadata.namespace,
+            "lease_name": obj.metadata.name,
+        }
+
+
+class LeasePhase(LeaseMetric):
+    suffix = "phase"
+    description = "The phase of the lease"
+
+    def labels(self, obj):
+        return {
+            **super().labels(obj),
+            "phase": obj.get("status", {}).get("phase", "Unknown"),
+        }
+
+
+class LeaseStartsAt(LeaseMetric):
+    suffix = "starts_at"
+    type = "gauge"
+    description = "The start time of the lease"
+
+    def value(self, obj):
+        created_at = obj.metadata["creationTimestamp"]
+        starts_at = obj.get("spec", {}).get("startsAt", created_at)
+        return datetime.datetime.fromisoformat(starts_at).timestamp()
+
+
+class LeaseEndsAt(LeaseMetric):
+    suffix = "ends_at"
+    type = "gauge"
+    description = "The end time of the lease"
+
+    def value(self, obj):
+        ends_at = obj.get("spec", {}).get("endsAt")
+        if ends_at:
+            return datetime.datetime.fromisoformat(ends_at).timestamp()
+        else:
+            return -1
+
+
 def escape(content):
     """Escape the given content for use in metric output."""
     return content.replace("\\", r"\\").replace("\n", r"\n").replace('"', r"\"")
@@ -116,6 +162,10 @@ def render_openmetrics(*metrics):
 
 METRICS = {
     registry.API_GROUP: {
+        "leases": [
+            LeasePhase,
+            LeaseEndsAt,
+        ],
         "schedules": [
             ScheduleRefFound,
             ScheduleDeleteTriggered,
