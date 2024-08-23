@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   azimuth-schedule-operator:
   - apiVersion: v2
+    appVersion: 763a285
+    created: "2024-08-23T09:59:38.074901236Z"
+    description: Helm chart for deploying the Azimuth schedule operator.
+    digest: 56a1cf91ffe0e55fecadce8896c58392bd62367412a6a5b0f013d75a928b771b
+    name: azimuth-schedule-operator
+    type: application
+    urls:
+    - azimuth-schedule-operator-0.4.1-dev.0.update-bump-dependencies.6.tgz
+    version: 0.4.1-dev.0.update-bump-dependencies.6
+  - apiVersion: v2
     appVersion: 171ef89
-    created: "2024-08-23T09:52:27.485372533Z"
+    created: "2024-08-23T09:59:38.074582903Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 5cc24124f3fdb30caf050bc54f32a936931877d96f7b77de21731f26c3734113
     name: azimuth-schedule-operator
@@ -13,7 +23,7 @@ entries:
     version: 0.4.1-dev.0.update-bump-dependencies.5
   - apiVersion: v2
     appVersion: d74953a
-    created: "2024-08-23T09:52:27.485026979Z"
+    created: "2024-08-23T09:59:38.07426487Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: e3af01ced17166847f861fecd971d815d587ee54ab2c3ab3a87583d6c389cab1
     name: azimuth-schedule-operator
@@ -23,7 +33,7 @@ entries:
     version: 0.4.1-dev.0.main.3
   - apiVersion: v2
     appVersion: 316ea4e
-    created: "2024-08-23T09:52:27.484655888Z"
+    created: "2024-08-23T09:59:38.073949572Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 99e7ac6422908bf12e326bafb0e8e115bef7d7eac6a8ec4d1496137969d1398e
     name: azimuth-schedule-operator
@@ -33,7 +43,7 @@ entries:
     version: 0.4.1-dev.0.main.2
   - apiVersion: v2
     appVersion: 35937b7
-    created: "2024-08-23T09:52:27.484283704Z"
+    created: "2024-08-23T09:59:38.073655444Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 589a268d58d4efe53e77b1bc86211a9b3014f74fd5c043b370660c09ca7bf842
     name: azimuth-schedule-operator
@@ -43,7 +53,7 @@ entries:
     version: 0.4.1-dev.0.main.1
   - apiVersion: v2
     appVersion: 901e49d
-    created: "2024-08-23T09:52:27.483900821Z"
+    created: "2024-08-23T09:59:38.07335892Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 13a74f9567b3a609a823305f1611209589124c2309d14262cda2632f1432d16f
     name: azimuth-schedule-operator
@@ -53,7 +63,7 @@ entries:
     version: 0.4.1-dev.0.fix-update-test-actions.3
   - apiVersion: v2
     appVersion: 852ce4e
-    created: "2024-08-23T09:52:27.483511035Z"
+    created: "2024-08-23T09:59:38.073060474Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 4918158c89df762dcdeb51baa55358ba0d7abd20abf035a4634358d3610a77b3
     name: azimuth-schedule-operator
@@ -63,7 +73,7 @@ entries:
     version: 0.4.1-dev.0.fix-stackhpc-refs.2
   - apiVersion: v2
     appVersion: 327584f
-    created: "2024-08-23T09:52:27.481848755Z"
+    created: "2024-08-23T09:59:38.072145398Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: b41410ff8dd61b565690060851640a0929d17d787acb104b7061ac8ec32e8dda
     name: azimuth-schedule-operator
@@ -73,7 +83,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.32
   - apiVersion: v2
     appVersion: 0d4c367
-    created: "2024-08-23T09:52:27.481026012Z"
+    created: "2024-08-23T09:59:38.071821454Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: a87fc6a841517b36ac09d1e0c73675efce1266a8ab85a0030e4dffcdb08d1cf9
     name: azimuth-schedule-operator
@@ -83,7 +93,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.31
   - apiVersion: v2
     appVersion: b319b69
-    created: "2024-08-23T09:52:27.480698863Z"
+    created: "2024-08-23T09:59:38.071488072Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 4d099d1958dddbeeaae6437c4cb4e36e75de1e39bbc74fcf35f6d9cc63fd0448
     name: azimuth-schedule-operator
@@ -93,7 +103,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.30
   - apiVersion: v2
     appVersion: b146a78
-    created: "2024-08-23T09:52:27.480371824Z"
+    created: "2024-08-23T09:59:38.071099608Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 529f4bb85f20b454d625cbddfd7a53efa112e6d1a4df9810892a43ed548a295e
     name: azimuth-schedule-operator
@@ -103,7 +113,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.29
   - apiVersion: v2
     appVersion: 85dd30e
-    created: "2024-08-23T09:52:27.480038593Z"
+    created: "2024-08-23T09:59:38.070759794Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: d604be17b4f045645cc66740bcd69343c5fc3ad818c7d12581a7b33d565f357f
     name: azimuth-schedule-operator
@@ -113,7 +123,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.27
   - apiVersion: v2
     appVersion: f0e3717
-    created: "2024-08-23T09:52:27.47970401Z"
+    created: "2024-08-23T09:59:38.070146648Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 479c0806d0c9a68a595ad657dc3a750ebcb20c25d04582098bc3b8bf2e421be4
     name: azimuth-schedule-operator
@@ -123,7 +133,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.26
   - apiVersion: v2
     appVersion: 399b596
-    created: "2024-08-23T09:52:27.479367253Z"
+    created: "2024-08-23T09:59:38.069234126Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: d5c17aca690e60e123aeff21c19981dffdc9e0c390cbfb0f8a735cb285c83584
     name: azimuth-schedule-operator
@@ -133,7 +143,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.25
   - apiVersion: v2
     appVersion: "9893855"
-    created: "2024-08-23T09:52:27.479000259Z"
+    created: "2024-08-23T09:59:38.068907187Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 6cf09616c3bc576afd936f69421336274bc04506c29211515448ce3802c06e42
     name: azimuth-schedule-operator
@@ -143,7 +153,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.24
   - apiVersion: v2
     appVersion: 48fa233
-    created: "2024-08-23T09:52:27.478632153Z"
+    created: "2024-08-23T09:59:38.06844791Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: c99c9a181f04e8cb277d3d82be4e68ac0c53994c233017d85bb29a9f5f07d515
     name: azimuth-schedule-operator
@@ -153,7 +163,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.23
   - apiVersion: v2
     appVersion: 370a6ad
-    created: "2024-08-23T09:52:27.478299514Z"
+    created: "2024-08-23T09:59:38.068037485Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 49ce5a157147a9db0122b6caac8a98f4befe6bc718ff385a8b87b4e4887578ff
     name: azimuth-schedule-operator
@@ -163,7 +173,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.22
   - apiVersion: v2
     appVersion: fc7e113
-    created: "2024-08-23T09:52:27.477975671Z"
+    created: "2024-08-23T09:59:38.067670171Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 383a3a1a8de68bf2b8b4bf23983388058d4441b29b310990c642ef44e58ae71e
     name: azimuth-schedule-operator
@@ -173,7 +183,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.21
   - apiVersion: v2
     appVersion: 821ce4f
-    created: "2024-08-23T09:52:27.47764806Z"
+    created: "2024-08-23T09:59:38.067347859Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: aa76e63df1157f85a36b97ff1b3a5bba343d9f24afc646bdc599167f37893e0e
     name: azimuth-schedule-operator
@@ -183,7 +193,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.19
   - apiVersion: v2
     appVersion: cdfa474
-    created: "2024-08-23T09:52:27.477318417Z"
+    created: "2024-08-23T09:59:38.066987237Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 9ea4f135c0e88dac19d76b6f413248d193300da7a5b19b231cc27f6966552aed
     name: azimuth-schedule-operator
@@ -193,7 +203,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.18
   - apiVersion: v2
     appVersion: b8ebbfc
-    created: "2024-08-23T09:52:27.476993351Z"
+    created: "2024-08-23T09:59:38.066622928Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: a0890ed722a3c364dfb01cf8550bf6141faa9617aff0f709d9a55b7c0ea8d361
     name: azimuth-schedule-operator
@@ -203,7 +213,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.17
   - apiVersion: v2
     appVersion: 05ee7df
-    created: "2024-08-23T09:52:27.476666833Z"
+    created: "2024-08-23T09:59:38.066309103Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 4e6c6119b774445cf410871d7e446d4b34074576da1a14dd7af24f66e707cc32
     name: azimuth-schedule-operator
@@ -213,7 +223,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.16
   - apiVersion: v2
     appVersion: 5c29430
-    created: "2024-08-23T09:52:27.47633779Z"
+    created: "2024-08-23T09:59:38.065987974Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 008a97112aa07d645f4000095998da72ac20d6331ab1e4f6aa1022db3299c5e4
     name: azimuth-schedule-operator
@@ -223,7 +233,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.15
   - apiVersion: v2
     appVersion: 3b35d64
-    created: "2024-08-23T09:52:27.476008637Z"
+    created: "2024-08-23T09:59:38.065667607Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 887824b0b84ff8fdea9cdbf2d216c0ab97e2ccb3a9687a014ccea67f560279f4
     name: azimuth-schedule-operator
@@ -233,7 +243,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.14
   - apiVersion: v2
     appVersion: 7327b19
-    created: "2024-08-23T09:52:27.475677941Z"
+    created: "2024-08-23T09:59:38.065335588Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 2dc9e884042d3b3a1cc7b23aed6f42b01387ee012753956ccb97ce9de47f117a
     name: azimuth-schedule-operator
@@ -243,7 +253,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.13
   - apiVersion: v2
     appVersion: 069fff2
-    created: "2024-08-23T09:52:27.47533939Z"
+    created: "2024-08-23T09:59:38.065015381Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 2c86d7ecbc690b45ebb0e06757a074743c5dec92bf4e658af0be51a22aa44791
     name: azimuth-schedule-operator
@@ -253,7 +263,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.12
   - apiVersion: v2
     appVersion: ac5ade5
-    created: "2024-08-23T09:52:27.474975372Z"
+    created: "2024-08-23T09:59:38.064717004Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 230ff6ea8741b929e676d3f7172a82033c1e208f98945b75e540a75f8f64314b
     name: azimuth-schedule-operator
@@ -263,7 +273,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.11
   - apiVersion: v2
     appVersion: 2e1dc26
-    created: "2024-08-23T09:52:27.474477365Z"
+    created: "2024-08-23T09:59:38.064418498Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 66021479580d5b23b5a672562d0f3530158428d1eeca4cc08ca68bb68d586e0d
     name: azimuth-schedule-operator
@@ -273,7 +283,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.10
   - apiVersion: v2
     appVersion: "0722081"
-    created: "2024-08-23T09:52:27.483125156Z"
+    created: "2024-08-23T09:59:38.072761827Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: baea74f13c56df0aa18e3fca9c97d9a3d7ce6a8270fbf173033fbaf7abaaa5af
     name: azimuth-schedule-operator
@@ -283,7 +293,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.9
   - apiVersion: v2
     appVersion: 3cc0e69
-    created: "2024-08-23T09:52:27.482706727Z"
+    created: "2024-08-23T09:59:38.072456989Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 52c617208eb14ddc974003921a05a5bfceadcffa088432212b827f68652aa2c5
     name: azimuth-schedule-operator
@@ -293,7 +303,7 @@ entries:
     version: 0.4.1-dev.0.feat-lease-crd.8
   - apiVersion: v2
     appVersion: e5e9f58
-    created: "2024-08-23T09:52:27.473795404Z"
+    created: "2024-08-23T09:59:38.064115523Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 5fc4a3b0d81b83a3cccb665a1099ac3d8ed09f0aff1625d47845f9813500aad4
     name: azimuth-schedule-operator
@@ -303,7 +313,7 @@ entries:
     version: 0.4.1-dev.0.call-blazar.3
   - apiVersion: v2
     appVersion: 995bf8a
-    created: "2024-08-23T09:52:27.473095691Z"
+    created: "2024-08-23T09:59:38.063814462Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 5f6d465cc16c03e105b7d9c22a86436cb113d230abf5cd15999e4bd9b2d17d52
     name: azimuth-schedule-operator
@@ -313,7 +323,7 @@ entries:
     version: 0.4.0
   - apiVersion: v2
     appVersion: f410d88
-    created: "2024-08-23T09:52:27.472787417Z"
+    created: "2024-08-23T09:59:38.063512548Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: a7236699e4c7709913e794151b6e7798c365ed2e57f4f079af8b42daaba5c82b
     name: azimuth-schedule-operator
@@ -323,7 +333,7 @@ entries:
     version: 0.3.1-dev.0.main.32
   - apiVersion: v2
     appVersion: 1c980fd
-    created: "2024-08-23T09:52:27.472444638Z"
+    created: "2024-08-23T09:59:38.063136968Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 7e433241ec9acf0064f37f4eb0f627d02015ced8ba4dbfac3ead4682ed2d52d4
     name: azimuth-schedule-operator
@@ -333,7 +343,7 @@ entries:
     version: 0.3.1-dev.0.main.28
   - apiVersion: v2
     appVersion: "1608253"
-    created: "2024-08-23T09:52:27.472106258Z"
+    created: "2024-08-23T09:59:38.062792366Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 2489a7145b945a7b63becccab0f7b31cc08c5da3b7f478fa5045a59ead9bfd22
     name: azimuth-schedule-operator
@@ -343,7 +353,7 @@ entries:
     version: 0.3.1-dev.0.main.20
   - apiVersion: v2
     appVersion: de0e150
-    created: "2024-08-23T09:52:27.471765242Z"
+    created: "2024-08-23T09:59:38.062438837Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 908506d8fdb33f902ab2eb0708ec2be8bac856bd3ed57f657ce2862810d92b5e
     name: azimuth-schedule-operator
@@ -353,7 +363,7 @@ entries:
     version: 0.3.1-dev.0.main.16
   - apiVersion: v2
     appVersion: 7c1c974
-    created: "2024-08-23T09:52:27.47142026Z"
+    created: "2024-08-23T09:59:38.061911173Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 535b2cc8e9c601d1c1ef615912628ad8c7f12c16419b2d66fab358f53766f85d
     name: azimuth-schedule-operator
@@ -363,7 +373,7 @@ entries:
     version: 0.3.1-dev.0.main.10
   - apiVersion: v2
     appVersion: ae25700
-    created: "2024-08-23T09:52:27.471056913Z"
+    created: "2024-08-23T09:59:38.061060527Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 4b8e56d35d0329dd5306e1ce1515b21eeaca736a8463cbe3f3d56103b79b873f
     name: azimuth-schedule-operator
@@ -373,7 +383,7 @@ entries:
     version: 0.3.1-dev.0.fix-remove-liveness-probe.34
   - apiVersion: v2
     appVersion: 6953d06
-    created: "2024-08-23T09:52:27.470704236Z"
+    created: "2024-08-23T09:59:38.060596191Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: e7bf97344dd4e7356781f298f9d567a39dd2238d4d2232c6b3c61c9a04ebeb5d
     name: azimuth-schedule-operator
@@ -383,7 +393,7 @@ entries:
     version: 0.3.0
   - apiVersion: v2
     appVersion: 30c85fa
-    created: "2024-08-23T09:52:27.470354725Z"
+    created: "2024-08-23T09:59:38.06026275Z"
     description: Helm chart for deploying the Azimuth schedule operator.
     digest: 68978cde97a756a78b8f8877a6adf1c24f7ad70d4b45a53c43cb15bea5bae175
     name: azimuth-schedule-operator
@@ -393,7 +403,7 @@ entries:
     version: 0.2.3-dev.0.feat-replace-ksm.2
   - apiVersion: v2
     appVersion: f34df04
-    created: "2024-08-23T09:52:27.469996197Z"
+    created: "2024-08-23T09:59:38.059912827Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -409,7 +419,7 @@ entries:
     version: 0.2.3-dev.0.feat-generate-crds.5
   - apiVersion: v2
     appVersion: fccd689
-    created: "2024-08-23T09:52:27.468354369Z"
+    created: "2024-08-23T09:59:38.058276987Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -425,7 +435,7 @@ entries:
     version: 0.2.3-dev.0.feat-generate-crds.4
   - apiVersion: v2
     appVersion: 62925f4
-    created: "2024-08-23T09:52:27.466657198Z"
+    created: "2024-08-23T09:59:38.056494383Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -441,7 +451,7 @@ entries:
     version: 0.2.3-dev.0.feat-generate-crds.3
   - apiVersion: v2
     appVersion: 627ca49
-    created: "2024-08-23T09:52:27.464000862Z"
+    created: "2024-08-23T09:59:38.054578862Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -457,7 +467,7 @@ entries:
     version: 0.2.3-dev.0.feat-generate-crds.2
   - apiVersion: v2
     appVersion: d53b32a
-    created: "2024-08-23T09:52:27.462474519Z"
+    created: "2024-08-23T09:59:38.05211109Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -473,7 +483,7 @@ entries:
     version: 0.2.2
   - apiVersion: v2
     appVersion: 3ba77d3
-    created: "2024-08-23T09:52:27.461021272Z"
+    created: "2024-08-23T09:59:38.050645197Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -489,7 +499,7 @@ entries:
     version: 0.2.2-dev.0.feat-update-python-packages.3
   - apiVersion: v2
     appVersion: ff12bb1
-    created: "2024-08-23T09:52:27.459562374Z"
+    created: "2024-08-23T09:59:38.049217054Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -505,7 +515,7 @@ entries:
     version: 0.2.2-dev.0.feat-update-python-packages.2
   - apiVersion: v2
     appVersion: 12f8471
-    created: "2024-08-23T09:52:27.458004442Z"
+    created: "2024-08-23T09:59:38.047792779Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -521,7 +531,7 @@ entries:
     version: 0.2.1
   - apiVersion: v2
     appVersion: 5afcf01
-    created: "2024-08-23T09:52:27.456540385Z"
+    created: "2024-08-23T09:59:38.046347264Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -537,7 +547,7 @@ entries:
     version: 0.2.1-dev.0.update-easykube.2
   - apiVersion: v2
     appVersion: e12df4c
-    created: "2024-08-23T09:52:27.454554223Z"
+    created: "2024-08-23T09:59:38.044895256Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -553,7 +563,7 @@ entries:
     version: 0.2.0
   - apiVersion: v2
     appVersion: 7ca0ace
-    created: "2024-08-23T09:52:27.452720427Z"
+    created: "2024-08-23T09:59:38.04342762Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -569,7 +579,7 @@ entries:
     version: 0.1.1-dev.0.main.1
   - apiVersion: v2
     appVersion: f8e35dd
-    created: "2024-08-23T09:52:27.451235842Z"
+    created: "2024-08-23T09:59:38.04106232Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -585,7 +595,7 @@ entries:
     version: 0.1.1-dev.0.feat-parameterisable-resources.4
   - apiVersion: v2
     appVersion: "0755455"
-    created: "2024-08-23T09:52:27.449743041Z"
+    created: "2024-08-23T09:59:38.039632865Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -601,7 +611,7 @@ entries:
     version: 0.1.1-dev.0.feat-parameterisable-resources.3
   - apiVersion: v2
     appVersion: 213b502
-    created: "2024-08-23T09:52:27.448245071Z"
+    created: "2024-08-23T09:59:38.038161422Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -617,7 +627,7 @@ entries:
     version: 0.1.1-dev.0.feat-all-resources.3
   - apiVersion: v2
     appVersion: ea79d63
-    created: "2024-08-23T09:52:27.44674121Z"
+    created: "2024-08-23T09:59:38.03674451Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -633,7 +643,7 @@ entries:
     version: 0.1.0
   - apiVersion: v2
     appVersion: 5450fcc
-    created: "2024-08-23T09:52:27.445222261Z"
+    created: "2024-08-23T09:59:38.035282484Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -649,7 +659,7 @@ entries:
     version: 0.1.0-dev.0.main.5
   - apiVersion: v2
     appVersion: c26838c
-    created: "2024-08-23T09:52:27.441917596Z"
+    created: "2024-08-23T09:59:38.032854818Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -665,7 +675,7 @@ entries:
     version: 0.1.0-dev.0.main.4
   - apiVersion: v2
     appVersion: 48b50aa
-    created: "2024-08-23T09:52:27.440187613Z"
+    created: "2024-08-23T09:59:38.031453354Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -681,7 +691,7 @@ entries:
     version: 0.1.0-dev.0.main.3
   - apiVersion: v2
     appVersion: ea1a1bb
-    created: "2024-08-23T09:52:27.438711984Z"
+    created: "2024-08-23T09:59:38.030022136Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -697,7 +707,7 @@ entries:
     version: 0.1.0-dev.0.main.2
   - apiVersion: v2
     appVersion: 47ecd53
-    created: "2024-08-23T09:52:27.431829035Z"
+    created: "2024-08-23T09:59:38.024160186Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -713,7 +723,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.44
   - apiVersion: v2
     appVersion: ec2db83
-    created: "2024-08-23T09:52:27.430329351Z"
+    created: "2024-08-23T09:59:38.02181832Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -729,7 +739,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.43
   - apiVersion: v2
     appVersion: bbf7605
-    created: "2024-08-23T09:52:27.428892044Z"
+    created: "2024-08-23T09:59:38.020358859Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -745,7 +755,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.42
   - apiVersion: v2
     appVersion: 5e0633f
-    created: "2024-08-23T09:52:27.427453675Z"
+    created: "2024-08-23T09:59:38.018903906Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -761,7 +771,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.41
   - apiVersion: v2
     appVersion: 379f087
-    created: "2024-08-23T09:52:27.425957969Z"
+    created: "2024-08-23T09:59:38.017481745Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -777,7 +787,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.40
   - apiVersion: v2
     appVersion: a096013
-    created: "2024-08-23T09:52:27.424465118Z"
+    created: "2024-08-23T09:59:38.016040568Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -793,7 +803,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.39
   - apiVersion: v2
     appVersion: "70534e4"
-    created: "2024-08-23T09:52:27.421912342Z"
+    created: "2024-08-23T09:59:38.013469574Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -809,7 +819,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.38
   - apiVersion: v2
     appVersion: 6348b13
-    created: "2024-08-23T09:52:27.420468493Z"
+    created: "2024-08-23T09:59:38.012063472Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -825,7 +835,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.37
   - apiVersion: v2
     appVersion: 700c269
-    created: "2024-08-23T09:52:27.418982124Z"
+    created: "2024-08-23T09:59:38.010551623Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -841,7 +851,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.36
   - apiVersion: v2
     appVersion: 5a2597f
-    created: "2024-08-23T09:52:27.41750337Z"
+    created: "2024-08-23T09:59:38.009135963Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -857,7 +867,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.35
   - apiVersion: v2
     appVersion: c2a9339
-    created: "2024-08-23T09:52:27.416049732Z"
+    created: "2024-08-23T09:59:38.007726656Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -873,7 +883,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.32
   - apiVersion: v2
     appVersion: c5b668c
-    created: "2024-08-23T09:52:27.414541432Z"
+    created: "2024-08-23T09:59:38.006272374Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -889,7 +899,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.31
   - apiVersion: v2
     appVersion: "9644173"
-    created: "2024-08-23T09:52:27.412772117Z"
+    created: "2024-08-23T09:59:38.004835616Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -905,7 +915,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.29
   - apiVersion: v2
     appVersion: 93f3b16
-    created: "2024-08-23T09:52:27.410742596Z"
+    created: "2024-08-23T09:59:38.00241162Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -921,7 +931,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.27
   - apiVersion: v2
     appVersion: b665c28
-    created: "2024-08-23T09:52:27.40930028Z"
+    created: "2024-08-23T09:59:38.000990951Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -937,7 +947,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.26
   - apiVersion: v2
     appVersion: b9297fb
-    created: "2024-08-23T09:52:27.407827697Z"
+    created: "2024-08-23T09:59:37.999549213Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -953,7 +963,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.24
   - apiVersion: v2
     appVersion: bc40f6a
-    created: "2024-08-23T09:52:27.406335157Z"
+    created: "2024-08-23T09:59:37.998090463Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -969,7 +979,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.22
   - apiVersion: v2
     appVersion: c01aafc
-    created: "2024-08-23T09:52:27.40486602Z"
+    created: "2024-08-23T09:59:37.996661138Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -985,7 +995,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.18
   - apiVersion: v2
     appVersion: 584b870
-    created: "2024-08-23T09:52:27.402955807Z"
+    created: "2024-08-23T09:59:37.994440553Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1001,7 +1011,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.16
   - apiVersion: v2
     appVersion: 8e4108b
-    created: "2024-08-23T09:52:27.400722067Z"
+    created: "2024-08-23T09:59:37.992911672Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1017,7 +1027,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.15
   - apiVersion: v2
     appVersion: b380fa4
-    created: "2024-08-23T09:52:27.39924732Z"
+    created: "2024-08-23T09:59:37.991459234Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1033,7 +1043,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.14
   - apiVersion: v2
     appVersion: 36043bf
-    created: "2024-08-23T09:52:27.397717139Z"
+    created: "2024-08-23T09:59:37.989927157Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1049,7 +1059,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.13
   - apiVersion: v2
     appVersion: 2f2401a
-    created: "2024-08-23T09:52:27.396223958Z"
+    created: "2024-08-23T09:59:37.988463539Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1065,7 +1075,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.11
   - apiVersion: v2
     appVersion: 9cd8f11
-    created: "2024-08-23T09:52:27.437238029Z"
+    created: "2024-08-23T09:59:38.028607358Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1081,7 +1091,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.9
   - apiVersion: v2
     appVersion: 70fb66d
-    created: "2024-08-23T09:52:27.435793758Z"
+    created: "2024-08-23T09:59:38.027153858Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1097,7 +1107,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.8
   - apiVersion: v2
     appVersion: 6c0ad79
-    created: "2024-08-23T09:52:27.434278877Z"
+    created: "2024-08-23T09:59:38.025740262Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1113,7 +1123,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.6
   - apiVersion: v2
     appVersion: 8006b73
-    created: "2024-08-23T09:52:27.394666577Z"
+    created: "2024-08-23T09:59:37.986949385Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1129,7 +1139,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.9
   - apiVersion: v2
     appVersion: 0cfac18
-    created: "2024-08-23T09:52:27.393199164Z"
+    created: "2024-08-23T09:59:37.985495385Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1145,7 +1155,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.8
   - apiVersion: v2
     appVersion: f5d8ba2
-    created: "2024-08-23T09:52:27.390740755Z"
+    created: "2024-08-23T09:59:37.982929051Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1161,7 +1171,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.7
   - apiVersion: v2
     appVersion: 34df15b
-    created: "2024-08-23T09:52:27.389305491Z"
+    created: "2024-08-23T09:59:37.981504545Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1177,7 +1187,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.6
   - apiVersion: v2
     appVersion: c568369
-    created: "2024-08-23T09:52:27.387798725Z"
+    created: "2024-08-23T09:59:37.980017863Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1193,7 +1203,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.5
   - apiVersion: v2
     appVersion: 83231b3
-    created: "2024-08-23T09:52:27.386243157Z"
+    created: "2024-08-23T09:59:37.978525971Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1209,7 +1219,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.4
   - apiVersion: v2
     appVersion: 0e35bdf
-    created: "2024-08-23T09:52:27.384715121Z"
+    created: "2024-08-23T09:59:37.977063935Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -1223,4 +1233,4 @@ entries:
     urls:
     - azimuth-schedule-operator-0.1.0-dev.0.add-initial-operator.3.tgz
     version: 0.1.0-dev.0.add-initial-operator.3
-generated: "2024-08-23T09:52:27.382916541Z"
+generated: "2024-08-23T09:59:37.97538238Z"
