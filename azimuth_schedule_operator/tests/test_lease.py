@@ -309,6 +309,24 @@ class TestLease(unittest.IsolatedAsyncioTestCase):
         )
         blazar_client.resources["leases"].create.assert_awaited_once()
 
+    async def test_create_blazar_lease_error_json_message_500(self):
+        blazar_client = util.mock_openstack_client()
+        blazar_client.resources["leases"].create.side_effect = util.httpx_status_error(
+            500, json={"error_message": "this is an error from blazar 2"}
+        )
+
+        lease = lease_crd.Lease.model_validate(fake_lease())
+        with self.assertRaises(operator.BlazarLeaseCreateError) as ctx:
+            _ = await operator.create_blazar_lease(
+                blazar_client, f"az-{lease.metadata.name}", lease
+            )
+
+        self.assertEqual(
+            str(ctx.exception),
+            "error creating blazar lease - this is an error from blazar 2",
+        )
+        blazar_client.resources["leases"].create.assert_awaited_once()
+
     async def test_create_blazar_lease_error_not_valid_json(self):
         blazar_client = util.mock_openstack_client()
         blazar_client.resources["leases"].create.side_effect = util.httpx_status_error(
