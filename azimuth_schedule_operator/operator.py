@@ -250,7 +250,7 @@ async def create_blazar_lease(blazar_client, lease_name, lease):
             }
         )
     except httpx.HTTPStatusError as exc:
-        if exc.response.status_code == 400:
+        if exc.response.status_code in [400, 500]:
             try:
                 message = exc.response.json()["error_message"]
             except (json.JSONDecodeError, TypeError, KeyError):
