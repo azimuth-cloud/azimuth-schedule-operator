@@ -1,8 +1,9 @@
 import asyncio
-import datetime
 import functools
 
 from aiohttp import web
+
+from dateutil.parser import isoparse
 
 import easykube
 
@@ -102,7 +103,7 @@ class LeaseStartsAt(LeaseMetric):
     def value(self, obj):
         created_at = obj.metadata["creationTimestamp"]
         starts_at = obj.get("spec", {}).get("startsAt", created_at)
-        return datetime.datetime.fromisoformat(starts_at).timestamp()
+        return isoparse(starts_at).timestamp()
 
 
 class LeaseEndsAt(LeaseMetric):
@@ -113,7 +114,7 @@ class LeaseEndsAt(LeaseMetric):
     def value(self, obj):
         ends_at = obj.get("spec", {}).get("endsAt")
         if ends_at:
-            return datetime.datetime.fromisoformat(ends_at).timestamp()
+            return isoparse(ends_at).timestamp()
         else:
             return -1
 
@@ -164,6 +165,7 @@ METRICS = {
     registry.API_GROUP: {
         "leases": [
             LeasePhase,
+            LeaseStartsAt,
             LeaseEndsAt,
         ],
         "schedules": [
