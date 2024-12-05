@@ -28,9 +28,12 @@ class Auth(httpx.Auth):
     """Authenticator class for OpenStack connections."""
 
     def __init__(
-        self, auth_url, application_credential_id, application_credential_secret
+        self,
+        auth_url,
+        application_credential_id,
+        application_credential_secret
     ):
-        self.url = auth_url
+        self.url = auth_url.rstrip("/").removesuffix("/v3")
         self._application_credential_id = application_credential_id
         self._application_credential_secret = application_credential_secret
         self._token = None
@@ -157,10 +160,11 @@ class Client(rest.AsyncClient):
 class Cloud:
     """Object for interacting with OpenStack clouds."""
 
-    def __init__(self, auth, transport, interface):
+    def __init__(self, auth, transport, interface, region):
         self._auth = auth
         self._transport = transport
         self._interface = interface
+        self._region = region
         self._endpoints = {}
         # A map of api name to client
         self._clients = {}
@@ -186,7 +190,10 @@ class Cloud:
             entry["type"]: next(
                 ep["url"]
                 for ep in entry["endpoints"]
-                if ep["interface"] == self._interface
+                if (
+                    ep["interface"] == self._interface and
+                    (not self._region or ep["region"] == self._region)
+                )
             )
             for entry in response.json()["catalog"]
             if len(entry["endpoints"]) > 0
@@ -242,7 +249,7 @@ def from_clouds(clouds, cloud, cacert):
     if cacert is not None:
         context.load_verify_locations(cadata=cacert)
     transport = httpx.AsyncHTTPTransport(verify=context)
-    return Cloud(auth, transport, config.get("interface", "public"))
+    return Cloud(auth, transport, config.get("interface", "public"), config.get("region_name"))
 
 
 def from_secret_data(secret_data):
