@@ -28,10 +28,7 @@ class Auth(httpx.Auth):
     """Authenticator class for OpenStack connections."""
 
     def __init__(
-        self,
-        auth_url,
-        application_credential_id,
-        application_credential_secret
+        self, auth_url, application_credential_id, application_credential_secret
     ):
         self.url = auth_url.rstrip("/").removesuffix("/v3")
         self._application_credential_id = application_credential_id
@@ -191,8 +188,8 @@ class Cloud:
                 ep["url"]
                 for ep in entry["endpoints"]
                 if (
-                    ep["interface"] == self._interface and
-                    (not self._region or ep["region"] == self._region)
+                    ep["interface"] == self._interface
+                    and (not self._region or ep["region"] == self._region)
                 )
             )
             for entry in response.json()["catalog"]
@@ -249,7 +246,9 @@ def from_clouds(clouds, cloud, cacert):
     if cacert is not None:
         context.load_verify_locations(cadata=cacert)
     transport = httpx.AsyncHTTPTransport(verify=context)
-    return Cloud(auth, transport, config.get("interface", "public"), config.get("region_name"))
+    return Cloud(
+        auth, transport, config.get("interface", "public"), config.get("region_name")
+    )
 
 
 def from_secret_data(secret_data):
