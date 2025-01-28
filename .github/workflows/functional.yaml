@@ -2,6 +2,11 @@ name: Functional tests
 
 on:
   workflow_call:
+    inputs:
+      ref:
+        type: string
+        description: The ref to build.
+        required: true
 
 jobs:
   functional_test:
@@ -10,6 +15,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Deploy devstack
         uses: EmilienM/devstack-action@v0.15
