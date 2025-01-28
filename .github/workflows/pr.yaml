@@ -1,12 +1,11 @@
 name: on pull request
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - opened
       - synchronize
       - ready_for_review
-      - edited
       - reopened
     branches:
       - main
@@ -36,4 +35,3 @@ jobs:
     needs: [publish_images]
     uses: ./.github/workflows/functional.yaml
     if: github.repository == 'azimuth-cloud/azimuth-schedule-operator'
-
