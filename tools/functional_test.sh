@@ -12,7 +12,7 @@ helm upgrade azimuth-schedule-operator ./charts/operator \
   --install \
   --wait \
   --timeout 10m \
-  --set-string image.tag=${TAG:-"${GITHUB_SHA::7}"} \
+  --set-string image.tag=${IMAGE_TAG} \
   --set-string config.blazarEnabled=no \
   --set config.checkInterval=2 \
   --set config.defaultGracePeriod=0 \

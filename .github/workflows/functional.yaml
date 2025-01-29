@@ -39,8 +39,14 @@ jobs:
             go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest
           gomplate --version
 
+      - name: Get SemVer version for current commit
+        id: semver
+        uses: azimuth-cloud/github-actions/semver@master
+
       - name: Run functional tests
         timeout-minutes: 15
         run: |
           source devstack/openrc demo demo
           tools/functional_test.sh
+        env:
+          IMAGE_TAG: ${{ steps.semver.outputs.short-sha }}
