@@ -18,6 +18,10 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.ref }}
 
+      - name: Get SemVer version for current commit
+        id: semver
+        uses: azimuth-cloud/github-actions/semver@master
+
       - name: Deploy devstack
         uses: EmilienM/devstack-action@v0.15
 
@@ -38,10 +42,6 @@ jobs:
           GOBIN=/usr/local/bin \
             go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest
           gomplate --version
-
-      - name: Get SemVer version for current commit
-        id: semver
-        uses: azimuth-cloud/github-actions/semver@master
 
       - name: Run functional tests
         timeout-minutes: 15
