@@ -2,6 +2,11 @@ name: Tox unit tests
 
 on:
   workflow_call:
+    inputs:
+      ref:
+        type: string
+        description: The ref to build.
+        required: true
 
 jobs:
   build:
@@ -13,6 +18,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.ref || github.ref }}
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
