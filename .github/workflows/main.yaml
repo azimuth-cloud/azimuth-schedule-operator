@@ -12,14 +12,23 @@ concurrency:
 jobs:
   unit_tests:
     uses: ./.github/workflows/tox.yaml
+    with:
+      ref: ${{ github.ref }}
 
   publish_images:
+    needs: [unit_tests]
     uses: ./.github/workflows/publish-images.yaml
+    with:
+      ref: ${{ github.ref }}
 
   publish_charts:
     needs: [publish_images]
     uses: ./.github/workflows/publish-charts.yaml
+    with:
+      ref: ${{ github.ref }}
 
   functional_tests:
     needs: [publish_images]
+    with:
+      ref: ${{ github.ref}}
     uses: ./.github/workflows/functional.yaml
