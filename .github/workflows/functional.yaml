@@ -23,7 +23,7 @@ jobs:
         uses: azimuth-cloud/github-actions/semver@master
 
       - name: Deploy devstack
-        uses: EmilienM/devstack-action@v0.17
+        uses: EmilienM/devstack-action@v0.18
 
       - name: Install k3s
         run: |
