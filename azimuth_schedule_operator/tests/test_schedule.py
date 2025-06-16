@@ -2,8 +2,8 @@ import datetime
 import unittest
 from unittest import mock
 
-from azimuth_schedule_operator.models.v1alpha1 import schedule as schedule_crd
 from azimuth_schedule_operator import operator
+from azimuth_schedule_operator.models.v1alpha1 import schedule as schedule_crd
 
 
 class TestSchedule(unittest.IsolatedAsyncioTestCase):

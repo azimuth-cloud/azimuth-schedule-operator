@@ -38,11 +38,11 @@ class LeaseStatusMatcher:
         return True
 
     def __repr__(self):
-        props = [f"phase={repr(self.phase)}"]
+        props = [f"phase={self.phase!r}"]
         if self.size_map is not None:
-            props.append(f"size_map={repr(self.size_map)}")
+            props.append(f"size_map={self.size_map!r}")
         if self.size_name_map is not None:
-            props.append(f"size_name_map={repr(self.size_name_map)}")
+            props.append(f"size_name_map={self.size_name_map!r}")
         return f"LeaseStatusMatcher<{', '.join(props)}>"
 
 

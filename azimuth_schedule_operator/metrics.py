@@ -1,11 +1,9 @@
 import asyncio
 import functools
 
-from aiohttp import web
-
-from dateutil.parser import isoparse
-
 import easykube
+from aiohttp import web
+from dateutil.parser import isoparse
 
 from .models import registry
 
@@ -15,7 +13,7 @@ class Metric:
     prefix = None
     # The suffix for the metric
     suffix = None
-    # The type of the metric - info or guage
+    # The type of the metric - info or gauge
     type = "info"
     # The description of the metric
     description = None
@@ -129,7 +127,7 @@ def format_value(value):
     formatted = repr(value)
     dot = formatted.find(".")
     if value > 0 and dot > 6:
-        mantissa = f"{formatted[0]}.{formatted[1:dot]}{formatted[dot + 1:]}".rstrip(
+        mantissa = f"{formatted[0]}.{formatted[1:dot]}{formatted[dot + 1 :]}".rstrip(
             "0."
         )
         return f"{mantissa}e+0{dot - 1}"
@@ -147,7 +145,7 @@ def render_openmetrics(*metrics):
 
         for labels, value in metric.records():
             if labels:
-                labelstr = "{{{0}}}".format(
+                labelstr = "{{{}}}".format(
                     ",".join([f'{k}="{escape(v)}"' for k, v in sorted(labels.items())])
                 )
             else:

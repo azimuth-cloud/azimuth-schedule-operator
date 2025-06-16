@@ -1,3 +1,5 @@
+# ruff: noqa: E501
+
 import json
 
 from azimuth_schedule_operator.models import registry
@@ -293,5 +295,5 @@ class TestModels(base.TestCase):
       }
     ]
   }
-}"""  # noqa
+}"""
         self.assertEqual(expected, actual)

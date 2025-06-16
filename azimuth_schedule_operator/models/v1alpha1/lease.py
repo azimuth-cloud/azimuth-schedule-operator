@@ -1,9 +1,7 @@
 import datetime as dt
-import typing as t
-
-from pydantic import Field
 
 from kube_custom_resource import CustomResource, schema
+from pydantic import Field
 
 
 class Machine(schema.BaseModel):
@@ -20,7 +18,7 @@ class Machine(schema.BaseModel):
 class ResourcesSpec(schema.BaseModel):
     """The resources that a lease is reserving."""
 
-    machines: t.List[Machine] = Field(
+    machines: list[Machine] = Field(
         default_factory=list,
         description="Machines that should be reserved by the lease.",
     )
@@ -92,7 +90,7 @@ class LeaseStatus(schema.BaseModel, extra="allow"):
         description="Mapping of original size name to reserved size name.",
     )
 
-    def set_phase(self, phase: LeasePhase, error_message: t.Optional[str] = None):
+    def set_phase(self, phase: LeasePhase, error_message: str | None = None):
         """Set the phase of the lease, along with an optional error message."""
         self.phase = phase
         self.error_message = error_message if phase == LeasePhase.ERROR else ""

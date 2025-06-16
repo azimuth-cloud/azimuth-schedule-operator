@@ -6,17 +6,18 @@ import logging
 import os
 import sys
 
+import easykube
 import httpx
 import kopf
 
-import easykube
-
+from azimuth_schedule_operator import openstack
 from azimuth_schedule_operator.models import registry
 from azimuth_schedule_operator.models.v1alpha1 import (
     lease as lease_crd,
+)
+from azimuth_schedule_operator.models.v1alpha1 import (
     schedule as schedule_crd,
 )
-from azimuth_schedule_operator import openstack
 from azimuth_schedule_operator.utils import k8s
 
 LOG = logging.getLogger(__name__)
@@ -163,8 +164,8 @@ async def check_for_delete(namespace: str, schedule: schedule_crd.Schedule):
 async def update_schedule(
     namespace: str,
     name: str,
-    ref_exists: bool = None,
-    ref_delete_triggered: bool = None,
+    ref_exists: bool | None = None,
+    ref_delete_triggered: bool | None = None,
 ):
     now = datetime.datetime.now(datetime.timezone.utc)
     now_string = now.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -375,7 +376,7 @@ async def reconcile_lease(body, logger, **_):
                     lease.status.size_name_map = await get_size_name_map(
                         cloud, lease.status.size_map
                     )
-                # Save the currrent status of the lease
+                # Save the current status of the lease
                 await save_instance_status(lease)
         else:
             # We are not using Blazar
