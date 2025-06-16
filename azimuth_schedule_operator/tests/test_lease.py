@@ -1287,9 +1287,9 @@ class TestLease(unittest.IsolatedAsyncioTestCase):
     async def test_delete_lease_secret_already_deleted(self, k8s_client):
         # Configure the Kubernetes client
         self.k8s_client_config_common(k8s_client)
-        k8s_client.apis["v1"].resources["secrets"].fetch.side_effect = (
-            util.k8s_api_error(404)
-        )
+        k8s_client.apis["v1"].resources[
+            "secrets"
+        ].fetch.side_effect = util.k8s_api_error(404)
 
         lease = fake_lease()
         await operator.delete_lease(lease, mock.Mock())
