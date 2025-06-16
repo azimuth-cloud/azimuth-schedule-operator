@@ -1,5 +1,4 @@
 import datetime as dt
-import typing as t
 
 from kube_custom_resource import CustomResource, schema
 from pydantic import Field
