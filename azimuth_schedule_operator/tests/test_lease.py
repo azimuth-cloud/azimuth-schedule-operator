@@ -2,17 +2,14 @@ import json
 import unittest
 from unittest import mock
 
+import freezegun
+import kopf
 from easykube.rest.util import PropertyDict
 
-import freezegun
-
-import kopf
-
-from ..models.v1alpha1 import lease as lease_crd
-from .. import openstack, operator
+from azimuth_schedule_operator import openstack, operator
+from azimuth_schedule_operator.models.v1alpha1 import lease as lease_crd
 
 from . import util
-
 
 API_VERSION = "scheduling.azimuth.stackhpc.com/v1alpha1"
 
@@ -185,9 +182,9 @@ class TestLease(unittest.IsolatedAsyncioTestCase):
     async def test_save_instance_status_conflict(self, k8s_client):
         lease_data = fake_lease(phase=lease_crd.LeasePhase.PENDING)
 
-        k8s_client.apis[API_VERSION].resources["leases/status"].replace.side_effect = (
-            util.k8s_api_error(409)
-        )
+        k8s_client.apis[API_VERSION].resources[
+            "leases/status"
+        ].replace.side_effect = util.k8s_api_error(409)
 
         lease = lease_crd.Lease.model_validate(lease_data)
         with self.assertRaises(kopf.TemporaryError):
@@ -351,15 +348,15 @@ class TestLease(unittest.IsolatedAsyncioTestCase):
 
     async def test_get_size_name_map(self):
         cloud = util.mock_openstack_cloud()
-        cloud.clients["compute"].resources["flavors"].list.return_value = (
-            util.as_async_iterable(
-                [
-                    PropertyDict({"id": "id1", "name": "flavor1"}),
-                    PropertyDict({"id": "id2", "name": "flavor2"}),
-                    PropertyDict({"id": "newid1", "name": "newflavor1"}),
-                    PropertyDict({"id": "newid2", "name": "newflavor2"}),
-                ]
-            )
+        cloud.clients["compute"].resources[
+            "flavors"
+        ].list.return_value = util.as_async_iterable(
+            [
+                PropertyDict({"id": "id1", "name": "flavor1"}),
+                PropertyDict({"id": "id2", "name": "flavor2"}),
+                PropertyDict({"id": "newid1", "name": "newflavor1"}),
+                PropertyDict({"id": "newid2", "name": "newflavor2"}),
+            ]
         )
 
         size_map = {"id1": "newid1", "id2": "newid2", "id3": "newid3"}
@@ -1290,9 +1287,9 @@ class TestLease(unittest.IsolatedAsyncioTestCase):
     async def test_delete_lease_secret_already_deleted(self, k8s_client):
         # Configure the Kubernetes client
         self.k8s_client_config_common(k8s_client)
-        k8s_client.apis["v1"].resources["secrets"].fetch.side_effect = (
-            util.k8s_api_error(404)
-        )
+        k8s_client.apis["v1"].resources[
+            "secrets"
+        ].fetch.side_effect = util.k8s_api_error(404)
 
         lease = fake_lease()
         await operator.delete_lease(lease, mock.Mock())

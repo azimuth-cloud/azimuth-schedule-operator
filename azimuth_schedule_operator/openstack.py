@@ -4,9 +4,7 @@ import contextlib
 import urllib.parse
 
 import httpx
-
 import yaml
-
 from easykube import rest
 
 
@@ -172,7 +170,7 @@ class Cloud:
         client = Client(
             base_url=self._auth.url, auth=self._auth, transport=self._transport
         )
-        # We have to slightly artifically create the catalog URL as we don't
+        # We have to slightly artificially create the catalog URL as we don't
         # benefit from the prefix handling that the resources use
         catalog_url = self._auth.url.rstrip("/") + "/v3/auth/catalog"
         try:
