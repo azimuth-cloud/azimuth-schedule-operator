@@ -15,8 +15,13 @@ jobs:
     with:
       ref: ${{ github.ref }}
 
+  helm_lint:
+    uses: ./.github/workflows/helm-lint.yaml
+    with:
+      ref: ${{ github.ref }}
+
   publish_images:
-    needs: [unit_tests]
+    needs: [unit_tests, helm_lint]
     uses: ./.github/workflows/publish-images.yaml
     with:
       ref: ${{ github.ref }}
