@@ -1,6 +1,6 @@
 [tool.ruff]
 line-length = 88
-target-version = "py310"
+target-version = "py312"
 
 [tool.ruff.format]
 line-ending = "lf"
@@ -33,6 +33,7 @@ ignore = [
     "F403",
     "A001",
     "A002", # causes errors
+    "UP017", # remove and fix once 3.10 not being tested in CI
 ]
 
 [tool.mypy]

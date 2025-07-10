@@ -1,8 +1,8 @@
-FROM ubuntu:jammy as build-image
+FROM ubuntu:24.04 as build-image
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install --no-install-recommends python3.10-venv git -y && \
+    apt-get install --no-install-recommends python3-venv git -y && \
     rm -rf /var/lib/apt/lists/*
 
 # build into a venv we can copy across
@@ -19,11 +19,11 @@ RUN pip install /azimuth-schedule-operator
 #
 # Now the image we run with
 #
-FROM ubuntu:jammy as run-image
+FROM ubuntu:24.04 as run-image
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install --no-install-recommends python3 tini ca-certificates -y && \
+    apt-get install --no-install-recommends python3 ca-certificates -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy across the venv
@@ -49,5 +49,4 @@ ENV PYTHONUNBUFFERED 1
 
 # By default, run the operator using kopf
 USER $APP_UID
-ENTRYPOINT ["tini", "-g", "--"]
 CMD ["python", "-m", "azimuth_schedule_operator"]
