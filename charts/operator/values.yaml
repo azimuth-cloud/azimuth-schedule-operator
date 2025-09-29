@@ -7,6 +7,8 @@ config:
   checkInterval: 60
   # The default grace period for leases
   defaultGracePeriod: 600
+  # Kopf internal debug logging, AS BOOL
+  kopfDebugLoggingEnabled: false
 
 # The operator image to use
 image:

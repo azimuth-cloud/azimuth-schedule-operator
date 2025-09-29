@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 import kopf
 
@@ -12,7 +13,15 @@ async def main():
     # This import is required to pick up the operator handlers
     from . import operator  # noqa: F401
 
-    kopf.configure(log_prefix=True)
+    kopf_enable_debug_logging = False
+
+    if os.environ.get("AZIMUTH_LEASE_KOPF_DEBUG_LOGGING_ENABLED", "false") != "false":
+        kopf_enable_debug_logging = True
+
+    kopf.configure(
+        log_prefix=True,
+        debug=kopf_enable_debug_logging,
+    )
     tasks = await kopf.spawn_tasks(
         clusterwide=True, liveness_endpoint="http://0.0.0.0:8000/healthz"
     )
