@@ -58,14 +58,14 @@ stringData:
       openstack:
         auth:
           auth_url: $(openstack catalog show -f json identity | jq -r '.endpoints | map(select(.interface == "public")) | first | .url')
-          application_credential_id: $(jq -r '.id' "$tmpfile")
-          application_credential_secret: $(jq -r '.secret' "$tmpfile")
+          application_credential_id: $(jq -r '.ID' "$tmpfile")
+          application_credential_secret: $(jq -r '.Secret' "$tmpfile")
         region_name: RegionOne
         interface: public
         identity_api_version: 3
         auth_type: v3applicationcredential
 EOF
-    echo "$(jq -r '.id' "$tmpfile")"
+    echo "$(jq -r '.ID' "$tmpfile")"
 )
 
 
