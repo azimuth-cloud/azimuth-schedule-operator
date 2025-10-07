@@ -72,8 +72,12 @@ EOF
 verify_credential_deleted() (
     set +x -e
     if openstack application credential show $2 >/dev/null 2>&1; then
-        echo "Application credential $2 still exists" 1>&2
-        return 1
+	# https://review.opendev.org/c/openstack/python-openstackclient/+/962663
+	appcred_id=$(openstack application credential show $2 -f json | jq -r ".ID")
+	if [ ${#appcred_id} -eq 32 ]; then
+	    echo "Application credential $2 still exists" 1>&2
+            return 1
+	fi
     fi
     if kubectl get secret $1 >/dev/null 2>&1; then
         echo "Kubernetes secret $1 still exists" 1>&2
