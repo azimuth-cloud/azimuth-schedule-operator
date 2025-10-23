@@ -33,6 +33,8 @@ spec:
               value: {{ quote .Values.config.defaultGracePeriod }}
             - name: AZIMUTH_LEASE_BLAZAR_ENABLED
               value: {{ quote .Values.config.blazarEnabled }}
+            - name: AZIMUTH_LEASE_KOPF_DEBUG_LOGGING_ENABLED
+              value: {{ quote .Values.config.kopfDebugLoggingEnabled }}
           ports:
             - name: metrics
               containerPort: 8080

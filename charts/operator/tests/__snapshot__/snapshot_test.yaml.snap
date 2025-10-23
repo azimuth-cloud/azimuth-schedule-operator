@@ -154,6 +154,8 @@ templated manifests should match snapshot:
                   value: "600"
                 - name: AZIMUTH_LEASE_BLAZAR_ENABLED
                   value: auto
+                - name: AZIMUTH_LEASE_KOPF_DEBUG_LOGGING_ENABLED
+                  value: "false"
               image: ghcr.io/azimuth-cloud/azimuth-schedule-operator:main
               imagePullPolicy: IfNotPresent
               name: operator

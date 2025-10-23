@@ -58,22 +58,26 @@ stringData:
       openstack:
         auth:
           auth_url: $(openstack catalog show -f json identity | jq -r '.endpoints | map(select(.interface == "public")) | first | .url')
-          application_credential_id: $(jq -r '.id' "$tmpfile")
-          application_credential_secret: $(jq -r '.secret' "$tmpfile")
+          application_credential_id: $(jq -r '.ID' "$tmpfile")
+          application_credential_secret: $(jq -r '.Secret' "$tmpfile")
         region_name: RegionOne
         interface: public
         identity_api_version: 3
         auth_type: v3applicationcredential
 EOF
-    echo "$(jq -r '.id' "$tmpfile")"
+    echo "$(jq -r '.ID' "$tmpfile")"
 )
 
 
 verify_credential_deleted() (
     set +x -e
     if openstack application credential show $2 >/dev/null 2>&1; then
-        echo "Application credential $2 still exists" 1>&2
-        return 1
+	# https://review.opendev.org/c/openstack/python-openstackclient/+/962663
+	appcred_id=$(openstack application credential show $2 -f json | jq -r ".ID")
+	if [ ${#appcred_id} -eq 32 ]; then
+	    echo "Application credential $2 still exists" 1>&2
+            return 1
+	fi
     fi
     if kubectl get secret $1 >/dev/null 2>&1; then
         echo "Kubernetes secret $1 still exists" 1>&2
