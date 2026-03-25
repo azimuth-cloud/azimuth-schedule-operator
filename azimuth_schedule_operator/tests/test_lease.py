@@ -218,8 +218,8 @@ class TestLease(unittest.IsolatedAsyncioTestCase):
     async def test_find_blazar_lease_not_present(self):
         fake_lease = {"name": "az-fake-lease"}
         blazar_client = util.mock_openstack_cloud().clients["reservation"]
-        blazar_client.resources["leases"].list.side_effect = (
-            lambda: util.as_async_iterable([fake_lease])
+        blazar_client.resources["leases"].list.side_effect = lambda: (
+            util.as_async_iterable([fake_lease])
         )
 
         lease = await operator.find_blazar_lease(blazar_client, "doesnotexist")
