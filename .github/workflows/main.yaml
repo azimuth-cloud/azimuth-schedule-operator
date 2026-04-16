@@ -23,10 +23,20 @@ jobs:
   publish_images:
     needs: [unit_tests, helm_lint]
     uses: ./.github/workflows/publish-images.yaml
+    permissions:
+      contents: read
+      id-token: write         # needed for signing the images with GitHub OIDC Token
+      packages: write         # required for pushing container images
+      security-events: write  # required for pushing SARIF files
     with:
       ref: ${{ github.ref }}
 
   publish_charts:
+    permissions:
+      contents: write
+      id-token: none
+      packages: none
+      security-events: none
     needs: [publish_images]
     uses: ./.github/workflows/publish-charts.yaml
     with:
