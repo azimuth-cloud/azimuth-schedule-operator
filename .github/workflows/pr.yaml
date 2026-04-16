@@ -28,6 +28,11 @@ jobs:
 
   # When the PR is from a branch of the main repo, publish images and charts
   publish_images:
+    permissions:
+      contents: read
+      id-token: write         # needed for signing the images with GitHub OIDC Token
+      packages: write         # required for pushing container images
+      security-events: write  # required for pushing SARIF files
     needs: [unit_tests, helm_lint]
     uses: ./.github/workflows/publish-images.yaml
     with:
@@ -36,6 +41,11 @@ jobs:
     if: github.repository == 'azimuth-cloud/azimuth-schedule-operator'
 
   publish_charts:
+    permissions:
+      contents: write
+      id-token: none
+      packages: none
+      security-events: none
     needs: [publish_images]
     uses: ./.github/workflows/publish-charts.yaml
     with:
