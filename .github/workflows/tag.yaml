@@ -24,7 +24,6 @@ jobs:
   publish_charts:
     permissions:
       contents: write
-      pull-requests: write
     needs: [publish_images]
     uses: ./.github/workflows/publish-charts.yaml
     with:
