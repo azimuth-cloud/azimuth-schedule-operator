@@ -11,12 +11,20 @@ jobs:
       ref: ${{ github.ref }}
 
   publish_images:
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+      security-events: write
     needs: [unit_tests]
     uses: ./.github/workflows/publish-images.yaml
     with:
       ref: ${{ github.ref }}
 
   publish_charts:
+    permissions:
+      contents: write
+      pull-requests: write
     needs: [publish_images]
     uses: ./.github/workflows/publish-charts.yaml
     with:
