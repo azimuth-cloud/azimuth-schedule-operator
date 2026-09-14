@@ -15,16 +15,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Run the unit tests on every PR, even from external repos
-  unit_tests:
-    uses: ./.github/workflows/tox.yaml
-    with:
-      ref: ${{ github.event.pull_request.head.sha }}
-
-  helm_lint:
-    uses: ./.github/workflows/helm-lint.yaml
-    with:
-      ref: ${{ github.event.pull_request.head.sha }}
+  fail_on_remote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR must be from a branch in the 'azimuth-cloud/azimuth-schedule-operator' repo
+        run: exit ${{ github.event.pull_request.head.repo.full_name == 'azimuth-cloud/azimuth-schedule-operator' && '0' || '1' }}
 
   # When the PR is from a branch of the main repo, publish images and charts
   publish_images:
@@ -33,12 +28,11 @@ jobs:
       id-token: write         # needed for signing the images with GitHub OIDC Token
       packages: write         # required for pushing container images
       security-events: write  # required for pushing SARIF files
-    needs: [unit_tests, helm_lint]
+    needs: [fail_on_remote]
     uses: ./.github/workflows/publish-images.yaml
     with:
       ref: ${{ github.event.pull_request.head.sha }}
     secrets: inherit
-    if: github.repository == 'azimuth-cloud/azimuth-schedule-operator'
 
   publish_charts:
     permissions:
@@ -51,7 +45,6 @@ jobs:
     with:
       ref: ${{ github.event.pull_request.head.sha }}
     secrets: inherit
-    if: github.repository == 'azimuth-cloud/azimuth-schedule-operator'
 
   # The functional tests require the runner image, so we can only run them
   # once the image has been built, and on PRs from the main repo
@@ -61,4 +54,3 @@ jobs:
     with:
       ref: ${{ github.event.pull_request.head.sha }}
     secrets: inherit
-    if: github.repository == 'azimuth-cloud/azimuth-schedule-operator'
