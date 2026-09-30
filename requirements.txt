@@ -17,7 +17,7 @@ idna==3.20
 iso8601==2.1.0
 kopf==1.44.6
 kube-custom-resource==0.6.1
-multidict==6.9.0
+multidict==7.0.0
 pbr==7.0.3
 propcache==0.5.4
 pydantic==2.13.5
