@@ -11,7 +11,8 @@ Dockerfile
 .gitignore
 .stestr.conf
 charts
-test-requirements.txt
 tilt-component.yaml
 tools
 tox.ini
+CODEOWNERS
+CONTRIBUTING.md
