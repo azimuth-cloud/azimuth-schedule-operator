@@ -1,3 +1,46 @@
+[project]
+name = "azimuth-schedule-operator"
+dynamic = ["version"]
+requires-python = ">=3.12"
+authors = [
+	{name = "John Garbutt"}
+]
+maintainers = [
+	{name = "Alex Manning", email = "alexm@stackhpc.com"},
+]
+readme = "README.md"
+license = "Apache-2.0"
+
+dependencies = [
+    "aiohttp>=3.14.3",
+    "easykube>=0.6.0",
+    "kopf>=1.44.6",
+    "pydantic>=2.13.5, < 3",
+    "python-dateutil>=2.9.0.post0",
+    "kube-custom-resource>=0.6.1",
+]
+
+[dependency-groups]
+dev = [
+    "black>=26.5.1",
+    "codespell>=2.4.3",
+    "coverage>=7.16.2",
+    "freezegun>=1.5.5",
+    "oslotest>=6.1.1",
+    "ruff>=0.16.9",
+    "stestr>=4.2.1",
+    "tox>=4.64.6",
+    "tox-uv>=1.36.0",
+]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+fallback-version = "0.0.1+unknown"
+
 [tool.ruff]
 line-length = 88
 target-version = "py312"
