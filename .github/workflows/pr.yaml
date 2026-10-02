@@ -1,34 +1,19 @@
 name: on pull request
 
 on:
-  pull_request_target:
-    types:
-      - opened
-      - synchronize
-      - ready_for_review
-      - reopened
-    branches:
-      - main
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
   cancel-in-progress: true
 
 jobs:
-  fail_on_remote:
-    runs-on: ubuntu-latest
-    steps:
-      - name: PR must be from a branch in the 'azimuth-cloud/azimuth-schedule-operator' repo
-        run: exit ${{ github.event.pull_request.head.repo.full_name == 'azimuth-cloud/azimuth-schedule-operator' && '0' || '1' }}
-
-  # When the PR is from a branch of the main repo, publish images and charts
   publish_images:
     permissions:
       contents: read
       id-token: write         # needed for signing the images with GitHub OIDC Token
       packages: write         # required for pushing container images
       security-events: write  # required for pushing SARIF files
-    needs: [fail_on_remote]
     uses: ./.github/workflows/publish-images.yaml
     with:
       ref: ${{ github.event.pull_request.head.sha }}
