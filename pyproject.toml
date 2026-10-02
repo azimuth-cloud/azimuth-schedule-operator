@@ -6,8 +6,7 @@ authors = [
 	{name = "John Garbutt"}
 ]
 maintainers = [
-	{name = "Ian Thompson", email = "ian@stackhpc.com"},
-	{name = "Raine Wales", email = "raine@stackhpc.com"}
+	{name = "Alex Manning", email = "alexm@stackhpc.com"},
 ]
 readme = "README.md"
 license = "Apache-2.0"
@@ -16,14 +15,13 @@ dependencies = [
     "aiohttp>=3.14.3",
     "easykube>=0.6.0",
     "kopf>=1.44.6",
-    "pydantic>=2.13.5",
+    "pydantic>=2.13.5, < 3",
     "python-dateutil>=2.9.0.post0",
     "kube-custom-resource>=0.6.1",
 ]
 
 [dependency-groups]
 dev = [
-    "aiohappyeyeballs>=2.7.1",
     "black>=26.5.1",
     "codespell>=2.4.3",
     "coverage>=7.16.2",
