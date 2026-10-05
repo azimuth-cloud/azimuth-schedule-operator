@@ -150,7 +150,7 @@ async def update_schedule_status(namespace: str, name: str, status_updates: dict
 
 
 async def check_for_delete(namespace: str, schedule: schedule_crd.Schedule):
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
     if now >= schedule.spec.not_after:
         LOG.info(f"Attempting delete for {namespace} and {schedule.metadata.name}.")
         await delete_reference(namespace, schedule.spec.ref)
@@ -167,7 +167,7 @@ async def update_schedule(
     ref_exists: bool | None = None,
     ref_delete_triggered: bool | None = None,
 ):
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
     now_string = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     status_updates = dict(updatedAt=now_string)
 
@@ -254,7 +254,7 @@ async def create_blazar_lease(blazar_client, lease_name, lease):
         if exc.response.status_code in [400, 500]:
             try:
                 message = exc.response.json()["error_message"]
-            except (json.JSONDecodeError, TypeError, KeyError):
+            except json.JSONDecodeError, TypeError, KeyError:
                 message = exc.response.text
             raise BlazarLeaseCreateError(f"error creating blazar lease - {message}")
         else:
@@ -293,7 +293,7 @@ async def get_size_name_map(cloud, size_map):
 async def update_lease_status_no_blazar(cloud, lease):
     """Updates the lease status when Blazar is not used for the lease."""
     if lease.spec.starts_at:
-        now = datetime.datetime.now(datetime.timezone.utc)
+        now = datetime.datetime.now(datetime.UTC)
         lease_started = now >= lease.spec.starts_at
     else:
         # No start date means start now
@@ -443,7 +443,7 @@ async def check_lease(body, logger, **_):
     # Calculate the threshold time at which we want to issue a delete
     threshold = lease.spec.ends_at - datetime.timedelta(seconds=grace_period)
     # Issue the delete if the threshold time has passed
-    if threshold < datetime.datetime.now(datetime.timezone.utc):
+    if threshold < datetime.datetime.now(datetime.UTC):
         logger.info("lease is ending within grace period - deleting owners")
         for owner in lease.metadata.owner_references:
             resource = await K8S_CLIENT.api(owner.api_version).resource(owner.kind)

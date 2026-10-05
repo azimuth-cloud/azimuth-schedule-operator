@@ -1,0 +1,69 @@
+min_version = "4.0.0"
+# We run autofix last, to ensure CI fails,
+# even though we do our best to autofix locally
+env_list = ["3.14", "ruff", "codespell", "autofix"]
+no_package = true
+
+[env_run_base]
+runner = "uv-venv-lock-runner"
+set_env = { PYTHONWARNINGS = "default::DeprecationWarning", OS_STDOUT_CAPTURE = "1", OS_STDERR_CAPTURE = "1", OS_TEST_TIMEOUT = "60" }
+commands = [
+    ["stestr", "run", "{posargs}"]
+]
+
+[env.autofix]
+commands = [
+    ["ruff", "format", "{tox_root}"],
+    ["codespell", "{tox_root}", "-w"],
+    ["ruff", "check", "{tox_root}", "--fix"]
+]
+
+[env.black]
+# TODO: understand why ruff doesn't fix
+# line lengths as well as black does
+commands = [
+    ["black", "{tox_root}", "{posargs}"]
+]
+
+[env.codespell]
+commands = [
+    ["codespell", "{posargs}"]
+]
+
+[env.ruff]
+description = "Run Ruff checks"
+commands = [
+    ["ruff", "check", "{tox_root}"],
+    ["ruff", "format", "{tox_root}", "--check"]
+]
+
+[env.venv]
+commands = [
+    ["{posargs}"]
+]
+
+[env.cover]
+set_env = { VIRTUAL_ENV = "{envdir}", PYTHON = "coverage run --source azimuth_schedule_operator --parallel-mode" }
+commands = [
+    ["stestr", "run", "{posargs}"],
+    ["coverage", "combine"],
+    ["coverage", "html", "-d", "cover"],
+    ["coverage", "xml", "-o", "cover/coverage.xml"],
+    ["coverage", "report"]
+]
+
+[env.debug]
+commands = [
+    ["oslo_debug_helper", "{posargs}"]
+]
+
+[env.kopf]
+pass_env = [
+    "CONSUL_HTTP_ADDR",
+    "ANSIBLE_RUNNER_IMAGE_TAG"
+]
+commands = [
+    ["kopf", "run", "azimuth_schedule_operator/operator.py", "--all-namespaces"]
+]
+
+
