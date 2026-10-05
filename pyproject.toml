@@ -27,10 +27,10 @@ dev = [
     "coverage>=7.16.2",
     "freezegun>=1.5.5",
     "oslotest>=6.1.1",
-    "ruff>=0.16.9",
+    "ruff>=0.16.10",
     "stestr>=4.2.1",
-    "tox>=4.64.6",
-    "tox-uv>=1.36.0",
+    "tox>=4.64.7",
+    "tox-uv>=1.36.1",
 ]
 
 [build-system]
