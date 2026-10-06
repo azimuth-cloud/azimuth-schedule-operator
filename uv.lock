@@ -194,7 +194,7 @@ requires-dist = [
     { name = "aiohttp", specifier = ">=3.14.3" },
     { name = "easykube", specifier = ">=0.6.0" },
     { name = "kopf", specifier = ">=1.44.6" },
-    { name = "kube-custom-resource", specifier = ">=0.6.1" },
+    { name = "kube-custom-resource", specifier = ">=0.7.2" },
     { name = "pydantic", specifier = ">=2.13.5,<3" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
 ]
@@ -656,16 +656,16 @@ wheels = [
 
 [[package]]
 name = "kube-custom-resource"
-version = "0.6.1"
+version = "0.7.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-types" },
     { name = "click" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ba/70/567c1b877455a22d18ab1ded2b9fbb7519fe4eccc42c6a32c922260b06cc/kube_custom_resource-0.6.1.tar.gz", hash = "sha256:1abeb5dff4876555b55d19d6162b92dd1dd414999c0803cebe75f048285b4ccc", size = 17899, upload-time = "2024-11-29T15:49:34.031Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f2/d4/311a27eeb1a5ea43c159cef9e18d096141ffe1e383bab106dd2fd208d007/kube_custom_resource-0.7.2.tar.gz", hash = "sha256:9375fed89e2cbbd1d33129b74dc01e0e168d6a57da4a1dd344de1250fb86f7a5", size = 102699, upload-time = "2026-10-02T14:59:24.17Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/81/52/3fbb12fcf21612210a6c65b15e71373b6e7a048b586ba3e3e6ca5358b02e/kube_custom_resource-0.6.1-py3-none-any.whl", hash = "sha256:29e1fd25beaa29b3622ae6ffa74939fb5b176c60c8dbe9fba1b9a150aef26ec0", size = 15128, upload-time = "2024-11-29T15:49:27.629Z" },
+    { url = "https://files.pythonhosted.org/packages/c5/eb/06cd02b8404d2bc2ef7d163ce69b8808c68383f36940c58ef7a45c64a0f6/kube_custom_resource-0.7.2-py3-none-any.whl", hash = "sha256:d997b547678df633e4737715332e73881ccfd64c27a5641e9f07bf6b8b5a8b46", size = 19004, upload-time = "2026-10-02T14:59:22.559Z" },
 ]
 
 [[package]]
