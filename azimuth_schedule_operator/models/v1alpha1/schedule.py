@@ -44,6 +44,6 @@ def get_fake_dict():
         metadata=dict(name="test1", uid="fakeuid1", namespace="ns1"),
         spec=dict(
             ref=dict(apiVersion="v1", kind="Pod", name="test1"),
-            notAfter=datetime.datetime.now(datetime.timezone.utc),
+            notAfter=datetime.datetime.now(datetime.UTC),
         ),
     )

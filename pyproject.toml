@@ -1,7 +1,7 @@
 [project]
 name = "azimuth-schedule-operator"
 dynamic = ["version"]
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 authors = [
 	{name = "John Garbutt"}
 ]
@@ -17,7 +17,7 @@ dependencies = [
     "kopf>=1.44.6",
     "pydantic>=2.13.5, < 3",
     "python-dateutil>=2.9.0.post0",
-    "kube-custom-resource>=0.6.1",
+    "kube-custom-resource>=0.7.2",
 ]
 
 [dependency-groups]
@@ -43,7 +43,7 @@ fallback-version = "0.0.1+unknown"
 
 [tool.ruff]
 line-length = 88
-target-version = "py312"
+target-version = "py314"
 
 [tool.ruff.format]
 line-ending = "lf"
@@ -72,11 +72,9 @@ select = [
     "N",
 ]
 ignore = [
-    "UP038", # deprecated
     "F403",
     "A001",
     "A002", # causes errors
-    "UP017", # remove and fix once 3.10 not being tested in CI
 ]
 
 [tool.mypy]

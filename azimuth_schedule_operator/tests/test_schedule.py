@@ -105,7 +105,7 @@ class TestSchedule(unittest.IsolatedAsyncioTestCase):
     ):
         namespace = "ns1"
         schedule = schedule_crd.get_fake()
-        now = datetime.datetime.now(datetime.timezone.utc)
+        now = datetime.datetime.now(datetime.UTC)
         schedule.spec.not_after = now + datetime.timedelta(seconds=5)
 
         await operator.check_for_delete(namespace, schedule)
