@@ -17,7 +17,7 @@ dependencies = [
     "kopf>=1.44.6",
     "pydantic>=2.13.5, < 3",
     "python-dateutil>=2.9.0.post0",
-    "kube-custom-resource>=0.6.1",
+    "kube-custom-resource>=0.7.2",
 ]
 
 [dependency-groups]
@@ -29,7 +29,7 @@ dev = [
     "oslotest>=6.1.1",
     "ruff>=0.16.10",
     "stestr>=4.2.1",
-    "tox>=4.64.7",
+    "tox>=4.64.8",
     "tox-uv>=1.36.1",
 ]
 
