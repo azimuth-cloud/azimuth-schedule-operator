@@ -14,13 +14,13 @@ on:
 
 jobs:
   publish_charts:
-    name: Publish Helm charts to GitHub pages
+    name: Publish Helm charts to Quay
     runs-on: ubuntu-latest
     outputs:
       chart-version: ${{ steps.semver.outputs.version }}
     permissions:
-      contents: write
-      id-token: none
+      contents: read
+      id-token: write
       packages: none
       security-events: none
     steps:
@@ -37,8 +37,21 @@ jobs:
         uses: azimuth-cloud/github-actions/semver@master
 
       - name: Publish Helm charts
-        uses: azimuth-cloud/github-actions/helm-publish@master
+        uses: azimuth-cloud/github-actions/helm-publish-oci@master
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          directory: charts/operator
+          username: ${{ secrets.QUAY_IO_USER }}
+          token: ${{secrets.QUAY_IO_TOKEN}}
+          registry: quay.io
+          repository: azimuth/azimuth-schedule-operator-charts
           version: ${{ steps.semver.outputs.version }}
           app-version: ${{ steps.semver.outputs.short-sha }}
+
+      - name: Publish artifact metadata
+        uses: azimuth-cloud/github-actions/artifacthub-metadata@master
+        with:
+          directory: charts/operator
+          registry: quay.io
+          repository: azimuth/azimuth-schedule-operator-charts
+          username: ${{ secrets.QUAY_IO_USER }}
+          token: ${{ secrets.QUAY_IO_TOKEN }}

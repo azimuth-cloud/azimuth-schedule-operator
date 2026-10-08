@@ -21,8 +21,8 @@ jobs:
 
   publish_charts:
     permissions:
-      contents: write
-      id-token: none
+      contents: read
+      id-token: write
       packages: none
       security-events: none
     needs: [publish_images]
