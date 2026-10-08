@@ -20,11 +20,16 @@ jobs:
       security-events: write  # required for pushing SARIF files
     with:
       ref: ${{ github.ref }}
+    secrets: inherit
 
   publish_charts:
     needs: [publish_images]
     uses: ./.github/workflows/publish-charts.yaml
     permissions:
-      contents: write
+      contents: read
+      id-token: write
+      packages: none
+      security-events: none
     with:
       ref: ${{ github.ref }}
+    secrets: inherit
