@@ -47,10 +47,11 @@ class Auth(httpx.Auth):
             if token == self._token:
                 yield
 
-    def _build_token_request(self):
+    def _build_token_request(self, request):
         return httpx.Request(
             "POST",
             f"{self.url}/v3/auth/tokens",
+            extensions=request.extensions,
             json={
                 "auth": {
                     "identity": {
@@ -72,7 +73,7 @@ class Auth(httpx.Auth):
     async def async_auth_flow(self, request):
         if self._token is None:
             async with self._refresh_token():
-                response = yield self._build_token_request()
+                response = yield self._build_token_request(request)
                 await response.aread()
                 self._handle_token_response(response)
         request.headers["X-Auth-Token"] = self._token
