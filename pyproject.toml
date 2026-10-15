@@ -12,25 +12,25 @@ readme = "README.md"
 license = "Apache-2.0"
 
 dependencies = [
-    "aiohttp>=3.14.4",
+    "aiohttp>=3.14.5",
     "easykube>=0.6.0",
     "kopf>=1.44.6",
-    "pydantic>=2.14.0,<3",
+    "pydantic>=2.14.1,<3",
     "python-dateutil>=2.9.0.post0",
     "kube-custom-resource>=0.7.2",
 ]
 
 [dependency-groups]
 dev = [
-    "black>=26.10.0",
+    "black>=26.10.1",
     "codespell>=2.4.3",
     "coverage>=7.16.2",
     "freezegun>=1.5.5",
     "oslotest>=6.1.1",
-    "ruff>=0.16.10",
+    "ruff>=0.17.0",
     "stestr>=4.2.1",
-    "tox>=4.64.10",
-    "tox-uv>=1.36.1",
+    "tox>=4.65.3",
+    "tox-uv>=1.37.0",
 ]
 
 [build-system]
