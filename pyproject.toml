@@ -27,11 +27,15 @@ dev = [
     "coverage>=7.16.2",
     "freezegun>=1.5.5",
     "oslotest>=6.1.1",
-    "ruff>=0.17.1",
+    "ruff>=0.16.0",
     "stestr>=4.2.1",
-    "tox>=4.66.0",
+    "tox>=4.4.0",
     "tox-uv>=1.37.0",
 ]
+
+[tool.uv]
+exclude-newer = "7 days"
+exclude-newer-package = { certifi = false }
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
