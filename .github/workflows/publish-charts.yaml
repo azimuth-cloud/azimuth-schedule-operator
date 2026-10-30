@@ -34,7 +34,7 @@ jobs:
 
       - name: Get SemVer version for current commit
         id: semver
-        uses: azimuth-cloud/github-actions/semver@master
+        uses: azimuth-cloud/github-actions/semver@PLATFORM-1546-semver
 
       - name: Publish Helm charts
         uses: azimuth-cloud/github-actions/helm-publish-oci@master
