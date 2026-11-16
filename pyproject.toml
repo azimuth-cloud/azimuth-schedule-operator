@@ -15,7 +15,7 @@ dependencies = [
     "aiohttp>=3.14.5",
     "easykube>=0.6.0",
     "kopf>=1.45.2",
-    "pydantic>=2.14.2,<3",
+    "pydantic>=2.14.3,<3",
     "python-dateutil>=4.0.0",
     "kube-custom-resource>=0.7.2",
 ]
@@ -24,13 +24,13 @@ dependencies = [
 dev = [
     "black>=26.10.1",
     "codespell>=2.4.3",
-    "coverage>=7.17.0",
+    "coverage>=7.17.2",
     "freezegun>=1.5.5",
     "oslotest>=6.1.1",
-    "ruff>=0.17.3",
+    "ruff>=0.17.4",
     "stestr>=4.2.1",
-    "tox>=4.67.5",
-    "tox-uv>=1.37.3",
+    "tox>=4.67.13",
+    "tox-uv>=1.37.7",
 ]
 
 [tool.uv]
