@@ -1,11 +1,14 @@
 import asyncio
 import base64
 import contextlib
+import logging
 import urllib.parse
 
 import httpx
 import yaml
 from easykube import rest
+
+LOG = logging.getLogger(__name__)
 
 
 class UnsupportedAuthenticationError(Exception):
@@ -182,18 +185,23 @@ class Cloud:
                 return self
             else:
                 raise
-        self._endpoints = {
-            entry["type"]: next(
-                ep["url"]
-                for ep in entry["endpoints"]
-                if (
-                    ep["interface"] == self._interface
-                    and (not self._region or ep["region"] == self._region)
+        self._endpoints = {}
+        region_undefined = not self._region
+        for service in response.json()["catalog"]:
+            valid_urls = [
+                endpoint["url"]
+                for endpoint in service["endpoints"]
+                if (region_undefined or endpoint["region"] == self._region)
+                and endpoint["interface"] == self._interface
+            ]
+            # If a service has more than one endpoint we take the first returned
+            if len(valid_urls) > 0:
+                self._endpoints[service["type"]] = valid_urls[0]
+            else:
+                LOG.debug(
+                    f"Dropping {service['type']} as there are no valid endpoints with"
+                    f" region: {self._region} and interface: {self._interface}"
                 )
-            )
-            for entry in response.json()["catalog"]
-            if len(entry["endpoints"]) > 0
-        }
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback):
