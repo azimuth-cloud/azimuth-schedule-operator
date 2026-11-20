@@ -41,6 +41,7 @@ jobs:
     uses: ./.github/workflows/publish-charts.yaml
     with:
       ref: ${{ github.ref }}
+    secrets: inherit
 
   functional_tests:
     needs: [publish_images]
